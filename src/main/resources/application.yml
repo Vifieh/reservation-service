@@ -6,7 +6,7 @@ spring:
     name: reservation-service
   datasource:
     username: '**USERNAME**'
-    url: jdbc:postgresql://localhost:5432/ecommerce-service
+    url: jdbc:postgresql://localhost:5432/reservation-service
     password: '**PASSWORD**'
   jpa:
     properties:
@@ -41,7 +41,7 @@ spring:
           writetimeout: 5000
 banner:
   location: 'banner.txt'
-wicon:
+reservation:
   app:
     jwtSecret: 'secret'
     jwtExpirationMs: '86400000'
