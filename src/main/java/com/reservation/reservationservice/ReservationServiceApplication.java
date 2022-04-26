@@ -1,4 +1,4 @@
-package com.resevation.reservationservice;
+package com.reservation.reservationservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
