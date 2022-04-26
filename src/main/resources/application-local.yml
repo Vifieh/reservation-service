@@ -46,7 +46,7 @@ spring:
           writetimeout: 5000
 banner:
   location: 'banner.txt'
-wicon:
+reservation:
   app:
     jwtSecret: 'secret'
     jwtExpirationMs: '86400000'
