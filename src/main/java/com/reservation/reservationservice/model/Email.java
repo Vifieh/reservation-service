@@ -8,10 +8,7 @@ import java.util.Map;
 @Data
 public class Email {
 
-    @Schema(example = "test@gmail.com")
-    String from;
-    @Schema(example = "no-reply, Confirm your email")
-    String subject;
-    @Schema(example = "registration.html")
-    String template;
+    String from = "test@gmail.com";
+    String subject = "no-reply, Confirm your email";
+    String template = "registration.html";
 }

@@ -12,17 +12,18 @@ public interface AuthenticationService {
 
     void register(RegisterPayload registerPayload);
 
+    void resendVerification(String email);
+
     LoginDTO login(User user);
 
-//    Optional<RefreshToken> findByToken(String token);
+    Optional<RefreshToken> findByToken(String token);
 
     RefreshToken createRefreshToken(String userId);
-//
-//    RefreshToken verifyExpiration(RefreshToken token);
-//
+
+    RefreshToken verifyExpiration(RefreshToken token);
+
     String confirmToken(String token);
-//
-//    void resendVerification(String email);
+
 
 
 }

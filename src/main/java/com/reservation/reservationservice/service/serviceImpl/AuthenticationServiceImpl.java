@@ -5,6 +5,7 @@ import com.reservation.reservationservice.dto.LoginDTO;
 import com.reservation.reservationservice.exception.BadRequestException;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
+import com.reservation.reservationservice.exception.TokenRefreshException;
 import com.reservation.reservationservice.model.*;
 import com.reservation.reservationservice.payload.RegisterPayload;
 import com.reservation.reservationservice.repository.RefreshTokenRepository;
@@ -14,6 +15,7 @@ import com.reservation.reservationservice.service.AuthenticationService;
 import com.reservation.reservationservice.service.ConfirmationTokenService;
 import com.reservation.reservationservice.service.EmailService;
 import com.reservation.reservationservice.util.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,17 +39,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final Util util = new Util();
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
     UserRepository userRepository;
 
+    @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
     RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
     ConfirmationTokenService confirmationTokenService;
 
+    @Autowired
     EmailService emailService;
 
     @Value("${reservation.app.jwtRefreshExpirationMs}")
@@ -59,7 +70,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void register(RegisterPayload registerPayload) {
-        checkEmail(registerPayload.getEmail());
+        Optional<User> user1 = userRepository.findByEmail(registerPayload.getEmail());
+        if (user1.isPresent()) {
+            throw new ResourceAlreadyExistException("User already exist with email: "+ registerPayload.getEmail());
+        }
         List<Role> roleList = new ArrayList<>();
         Email email = new Email();
         User user = new User();
@@ -76,10 +90,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
+        System.out.println(email);
         String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
+        emailService.send(user, email,  link);
         userRepository.save(user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        emailService.send(user, email,  link);
     }
 
     @Transactional
@@ -101,6 +116,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void enableUser(String email) {
         userRepository.enableUser(email);
     }
+
+    @Override
+    public void resendVerification(String email) {
+        Optional<User> user1 = userRepository.findByEmail(email);
+        Email email1 = new Email();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                util.generateToken(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                user1.get()
+        );
+        String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
+        if(user1.get().getTokens().get(0).getConfirmedAt() == null) {
+            confirmationTokenService.saveConfirmationToken(confirmationToken);
+            emailService.send(user1.get(), email1, link);
+        }
+    }
+
+
+    @Override
+    public RefreshToken verifyExpiration(RefreshToken token) {
+        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+            refreshTokenRepository.delete(token);
+            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+        }
+        return token;
+    }
+
 
     @Override
     public LoginDTO login(User user) {
@@ -138,10 +181,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return refreshToken;
     }
 
+    @Override
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
+    }
+
 
     private Optional<User> checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        user.orElseThrow(() -> new ResourceAlreadyExistException("User already exist with email: "+ email));
+        user.orElseThrow(() -> new ResourceNotFoundException("User does not exist with email: "+ email));
         return user;
     }
 }
