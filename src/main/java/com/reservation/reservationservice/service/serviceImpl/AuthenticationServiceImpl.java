@@ -149,8 +149,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public LoginDTO login(User user) {
-        Optional<User> user1 = checkEmail(user.getEmail());
-        if (!user1.get().getEnabled()) {
+        User user1 = checkEmail(user.getEmail());
+        if (!user1.getEnabled()) {
             throw new BadRequestException(user.getEmail() + " has nas not yet confirmed the account");
         }
         Authentication authentication;
@@ -165,10 +165,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        RefreshToken refreshToken = createRefreshToken(userDetails.getUserId());
+        RefreshToken refreshToken = createRefreshToken(userDetails.getUser().getId());
 
-        return new LoginDTO(jwt, refreshToken.getToken(), userDetails.getUserId(),
-                userDetails.getEmail(),roles);
+        return new LoginDTO(jwt, refreshToken.getToken(), userDetails.getUser().getId(),
+                userDetails.getUsername(),roles);
     }
 
     @Override
@@ -188,10 +188,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return refreshTokenRepository.findByToken(token);
     }
 
-
-    private Optional<User> checkEmail(String email) {
+    @Override
+    public User checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         user.orElseThrow(() -> new ResourceNotFoundException("User does not exist with email: "+ email));
-        return user;
+        return user.get();
     }
 }

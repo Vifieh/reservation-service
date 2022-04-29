@@ -38,4 +38,7 @@ public class User {
             inverseJoinColumns =
                     { @JoinColumn(name = "contact_id", referencedColumnName = "id") })
     private ContactDetails contactDetails;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Country> countries;
 }

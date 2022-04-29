@@ -24,6 +24,5 @@ public interface AuthenticationService {
 
     String confirmToken(String token);
 
-
-
+    User checkEmail(String email);
 }
