@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.exception;
 
+import com.reservation.reservationservice.dto.ResponseMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +47,13 @@ public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception,
+    public ResponseEntity<Object> handleMaxUploadSizeExceededExceptions(MaxUploadSizeExceededException exception,
                                                                        HttpServletRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setTitle("Uploaded file is too large");
+        exceptionResponse.setTitle("One or more files are too large!");
         exceptionResponse.setMessage(exception.getMessage());
         exceptionResponse.setEndpoint(request.getRequestURI());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.EXPECTATION_FAILED);
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
@@ -73,8 +74,6 @@ public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
         exceptionResponse.setTitle("VALIDATION_FAILED");
         exceptionResponse.setMessage(ex.getBindingResult().toString());
         exceptionResponse.setEndpoint(request.toString());
-
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
-
 }
