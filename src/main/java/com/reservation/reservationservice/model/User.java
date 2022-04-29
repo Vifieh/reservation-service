@@ -30,4 +30,12 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ConfirmationToken> tokens;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_contactDetails",
+            joinColumns =
+                    { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "contact_id", referencedColumnName = "id") })
+    private ContactDetails contactDetails;
 }

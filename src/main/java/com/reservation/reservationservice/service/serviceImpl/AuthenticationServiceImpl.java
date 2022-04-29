@@ -82,6 +82,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(registerPayload.getPassword()));
         if (registerPayload.getRole().equals("USER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_USER));
+        }else {
+            roleList.add(roleRepository.findByRole(ERole.ROLE_MANAGER));
         }
         user.setRole(roleList);
         ConfirmationToken confirmationToken = new ConfirmationToken(
