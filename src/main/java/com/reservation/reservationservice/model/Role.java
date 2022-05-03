@@ -1,6 +1,7 @@
 package com.reservation.reservationservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.reservation.reservationservice.constants.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

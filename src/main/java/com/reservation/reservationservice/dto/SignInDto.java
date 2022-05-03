@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 @RequiredArgsConstructor
-public class SignInDTO {
+public class SignInDto {
 
         private final String accessToken;
         private final String refreshToken;

@@ -1,7 +1,6 @@
 package com.reservation.reservationservice.service;
 
-import com.reservation.reservationservice.dto.LoginDTO;
-import com.reservation.reservationservice.dto.SignInDTO;
+import com.reservation.reservationservice.dto.LoginDto;
 import com.reservation.reservationservice.model.RefreshToken;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.payload.RegisterPayload;
@@ -14,7 +13,7 @@ public interface AuthenticationService {
 
     void resendVerification(String email);
 
-    LoginDTO login(User user);
+    LoginDto login(User user);
 
     Optional<RefreshToken> findByToken(String token);
 

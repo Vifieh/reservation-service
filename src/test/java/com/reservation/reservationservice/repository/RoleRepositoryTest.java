@@ -1,6 +1,6 @@
 package com.reservation.reservationservice.repository;
 
-import com.reservation.reservationservice.model.ERole;
+import com.reservation.reservationservice.constants.ERole;
 import com.reservation.reservationservice.model.Role;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

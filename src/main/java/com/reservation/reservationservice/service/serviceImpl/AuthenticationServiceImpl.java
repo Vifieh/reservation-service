@@ -1,7 +1,8 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.config.security.JwtUtils;
-import com.reservation.reservationservice.dto.LoginDTO;
+import com.reservation.reservationservice.constants.ERole;
+import com.reservation.reservationservice.dto.LoginDto;
 import com.reservation.reservationservice.exception.BadRequestException;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
@@ -70,19 +71,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void register(RegisterPayload registerPayload) {
-        Optional<User> user1 = userRepository.findByEmail(registerPayload.getEmail());
-        if (user1.isPresent()) {
-            throw new ResourceAlreadyExistException("User already exist with email: "+ registerPayload.getEmail());
-        }
         List<Role> roleList = new ArrayList<>();
         Email email = new Email();
         User user = new User();
+        Optional<User> user1 = userRepository.findByEmail(registerPayload.getEmail());
         user.setId(util.generateId());
         user.setEmail(registerPayload.getEmail());
         user.setPassword(passwordEncoder.encode(registerPayload.getPassword()));
         if (registerPayload.getRole().equals("USER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_USER));
-        }else {
+        }
+        if (user1.isPresent() || registerPayload.getRole().equals("MANAGER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_MANAGER));
         }
         user.setRole(roleList);
@@ -148,7 +147,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public LoginDTO login(User user) {
+    public LoginDto login(User user) {
         User user1 = checkEmail(user.getEmail());
         if (!user1.getEnabled()) {
             throw new BadRequestException(user.getEmail() + " has nas not yet confirmed the account");
@@ -167,7 +166,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .collect(Collectors.toList());
         RefreshToken refreshToken = createRefreshToken(userDetails.getUser().getId());
 
-        return new LoginDTO(jwt, refreshToken.getToken(), userDetails.getUser().getId(),
+        return new LoginDto(jwt, refreshToken.getToken(), userDetails.getUser().getId(),
                 userDetails.getUsername(),roles);
     }
 

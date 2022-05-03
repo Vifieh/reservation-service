@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomDTO extends BaseEntity {
+public class CustomDto extends BaseEntity {
 
     private String id;
     private String name;

@@ -5,11 +5,9 @@ import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Country;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.CountryRepository;
-import com.reservation.reservationservice.service.AuthenticationService;
 import com.reservation.reservationservice.service.CountryService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

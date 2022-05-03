@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class LoginDTO {
+public class LoginDto {
 
     private final String accessToken;
     private final String refreshToken;
@@ -17,7 +17,7 @@ public class LoginDTO {
     private final List<String> role;
     private String type = "Bearer";
 
-    public LoginDTO(String accessToken, String refreshToken, String id, String email, List<String> role) {
+    public LoginDto(String accessToken, String refreshToken, String id, String email, List<String> role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;

@@ -1,6 +1,6 @@
 package com.reservation.reservationservice.controller;
 
-import com.reservation.reservationservice.dto.CustomDTO;
+import com.reservation.reservationservice.dto.CustomDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.model.Country;
 import com.reservation.reservationservice.payload.CustomPayload;
@@ -29,7 +29,7 @@ public class CountryController {
     String message = null;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/protected/countries")
+    @PostMapping("protected/countries")
     public ResponseEntity<ResponseMessage> createCountry(@RequestBody CustomPayload countryPayload) {
         Country country = this.modelMapper.map(countryPayload, Country.class);
         countryService.createCountry(country);
@@ -38,8 +38,8 @@ public class CountryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("protected/countries/{countryId}")
-    public ResponseEntity<ResponseMessage> editCountry(@PathVariable String countryId,
+    @PatchMapping("protected/countries/{countryId}")
+    public ResponseEntity<ResponseMessage> editCountry(@PathVariable("countryId") String countryId,
                                                        @RequestBody CustomPayload countryPayload) {
         Country country = this.modelMapper.map(countryPayload, Country.class);
         countryService.editCountry(countryId, country);
@@ -48,17 +48,25 @@ public class CountryController {
     }
 
     @GetMapping("public/countries")
-    public ResponseEntity<List<CustomDTO>> getCountries() {
+    public ResponseEntity<List<CustomDto>> getCountries() {
         List<Country> countries = countryService.getAllCountries();
-        List<CustomDTO> countryDTOS = countries.stream()
-                .map(country -> this.modelMapper.map(country, CustomDTO.class)).collect(Collectors.toList());
+        List<CustomDto> countryDTOS = countries.stream()
+                .map(country -> this.modelMapper.map(country, CustomDto.class)).collect(Collectors.toList());
         return new ResponseEntity<>(countryDTOS, HttpStatus.OK);
     }
 
     @GetMapping("public/countries/{countryId}")
-    public ResponseEntity<CustomDTO> getCountry(@PathVariable String countryId) {
+    public ResponseEntity<CustomDto> getCountry(@PathVariable("countryId") String countryId) {
         Country country = countryService.getCountry(countryId);
-        CustomDTO countryDto = this.modelMapper.map(country, CustomDTO.class);
+        CustomDto countryDto = this.modelMapper.map(country, CustomDto.class);
         return new ResponseEntity<>(countryDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("protected/countries/{countryId}")
+    public ResponseEntity<ResponseMessage> deleteCountry(@PathVariable("countryId") String countryId) {
+        countryService.deleteCountry(countryId);
+        message = "Country deleted successfully";
+        return new ResponseEntity<>(new ResponseMessage(message) , HttpStatus.NO_CONTENT);
     }
 }

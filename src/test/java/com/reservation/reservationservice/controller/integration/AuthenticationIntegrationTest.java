@@ -1,7 +1,6 @@
 package com.reservation.reservationservice.controller.integration;
 
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,14 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reservation.reservationservice.config.security.JwtUtils;
 import com.reservation.reservationservice.model.ConfirmationToken;
-import com.reservation.reservationservice.model.ERole;
+import com.reservation.reservationservice.constants.ERole;
 import com.reservation.reservationservice.model.Role;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.payload.RegisterPayload;
 import com.reservation.reservationservice.repository.ConfirmationTokenRepository;
 import com.reservation.reservationservice.repository.RefreshTokenRepository;
 import com.reservation.reservationservice.repository.RoleRepository;
-import com.reservation.reservationservice.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,12 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.UUID;
 
 @SpringBootTest
 @AutoConfigureMockMvc
