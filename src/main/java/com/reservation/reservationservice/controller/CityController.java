@@ -32,17 +32,18 @@ public class CityController {
     @PostMapping("/protected/cities/countries/{countryId}")
     public ResponseEntity<ResponseMessage> createCity(@PathVariable("countryId") String countryId,
                                                       @RequestBody CustomPayload cityPayload) {
-        City city = this.modelMapper.map(cityPayload, City.class);
+        City city = convertCityToCityPayload(cityPayload);
         cityService.createCity(countryId, city);
         message = "City created successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("protected/cities/{cityId}")
     public ResponseEntity<ResponseMessage> editCity(@PathVariable("cityId") String cityId,
                                                        @RequestBody CustomPayload cityPayload) {
-        City city = this.modelMapper.map(cityPayload, City.class);
+        City city = convertCityToCityPayload(cityPayload);
         cityService.editCity(cityId, city);
         message = "City edited successfully";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
@@ -51,9 +52,15 @@ public class CityController {
     @GetMapping("public/cities")
     public ResponseEntity<List<CustomDto>> getCities() {
         List<City> cities = cityService.getAllCities();
-        List<CustomDto> cityDTOS = cities.stream()
-                .map(city -> this.modelMapper.map(city, CustomDto.class)).collect(Collectors.toList());
+        List<CustomDto> cityDTOS = convertCitiesToCitiesDto(cities);
         return new ResponseEntity<>(cityDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("public/cities/countries/{countryId}")
+    public ResponseEntity<List<CustomDto>> getCitiesByCountry(@PathVariable("countryId") String countryId) {
+        List<City> cities = cityService.getCitiesByCountry(countryId);
+        List<CustomDto> cityDtos = convertCitiesToCitiesDto(cities);
+        return new ResponseEntity<>(cityDtos, HttpStatus.OK);
     }
 
     @GetMapping("public/cities/{cityId}")
@@ -69,5 +76,14 @@ public class CityController {
         cityService.deleteCity(cityId);
         message = "City deleted successfully";
         return new ResponseEntity<>(new ResponseMessage(message) , HttpStatus.NO_CONTENT);
+    }
+
+    private City convertCityToCityPayload(CustomPayload cityPayload) {
+        return this.modelMapper.map(cityPayload, City.class);
+    }
+
+    private List<CustomDto> convertCitiesToCitiesDto(List<City> cities) {
+        return cities.stream()
+                .map(city -> this.modelMapper.map(city, CustomDto.class)).collect(Collectors.toList());
     }
 }

@@ -12,6 +12,8 @@ public interface CityService {
 
     List<City> getAllCities();
 
+    List<City> getCitiesByCountry(String countryId);
+
     City getCity(String cityId);
 
     void deleteCity(String cityId);

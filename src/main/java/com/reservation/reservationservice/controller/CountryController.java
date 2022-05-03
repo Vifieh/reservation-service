@@ -31,7 +31,7 @@ public class CountryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("protected/countries")
     public ResponseEntity<ResponseMessage> createCountry(@RequestBody CustomPayload countryPayload) {
-        Country country = this.modelMapper.map(countryPayload, Country.class);
+        Country country = convertCountryToCountryPayload(countryPayload);
         countryService.createCountry(country);
         message = "Country created successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
@@ -41,7 +41,7 @@ public class CountryController {
     @PatchMapping("protected/countries/{countryId}")
     public ResponseEntity<ResponseMessage> editCountry(@PathVariable("countryId") String countryId,
                                                        @RequestBody CustomPayload countryPayload) {
-        Country country = this.modelMapper.map(countryPayload, Country.class);
+        Country country = convertCountryToCountryPayload(countryPayload);
         countryService.editCountry(countryId, country);
         message = "Country edited successfully";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
@@ -68,5 +68,9 @@ public class CountryController {
         countryService.deleteCountry(countryId);
         message = "Country deleted successfully";
         return new ResponseEntity<>(new ResponseMessage(message) , HttpStatus.NO_CONTENT);
+    }
+
+    private Country convertCountryToCountryPayload(CustomPayload countryPayload) {
+        return this.modelMapper.map(countryPayload, Country.class);
     }
 }
