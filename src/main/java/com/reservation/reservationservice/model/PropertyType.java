@@ -16,6 +16,10 @@ public class PropertyType extends BaseEntity{
     private String name;
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "propertyType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Property> properties;
 }

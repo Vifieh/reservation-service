@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/protected/")
 @CrossOrigin
 @RestController
 public class CategoryAmenityController {
@@ -30,7 +30,7 @@ public class CategoryAmenityController {
     String message = null;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("protected/categoryAmenities")
+    @PostMapping("categoryAmenities")
     public ResponseEntity<ResponseMessage> createCategoryAmenity(@RequestBody @Valid CustomPayload categoryAmenityPayload) {
         CategoryAmenity categoryAmenity = convertCategoryToCategoryPayload(categoryAmenityPayload);
         categoryAmenityService.createCategoryAmenity(categoryAmenity);
@@ -39,7 +39,7 @@ public class CategoryAmenityController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("protected/categoryAmenities/{categoryId}")
+    @PatchMapping("categoryAmenities/{categoryId}")
     public ResponseEntity<ResponseMessage> editCategoryAmenity(@PathVariable("categoryId") String categoryId,
                                                                @RequestBody @Valid CustomPayload categoryAmenityPayload) {
         CategoryAmenity categoryAmenity = convertCategoryToCategoryPayload(categoryAmenityPayload);
@@ -48,7 +48,8 @@ public class CategoryAmenityController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("public/categoryAmenities")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("categoryAmenities")
     public ResponseEntity<List<CustomDto>> getCategoriesAmenities() {
         List<CategoryAmenity> categoryAmenities = categoryAmenityService.getAllCategoriesAmenities();
         List<CustomDto> categoryAmenitiesDto = categoryAmenities.stream()
@@ -57,7 +58,8 @@ public class CategoryAmenityController {
         return new ResponseEntity<>(categoryAmenitiesDto, HttpStatus.OK);
     }
 
-    @GetMapping("public/categoryAmenities/{categoryId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("categoryAmenities/{categoryId}")
     public ResponseEntity<CustomDto> getCategoryAmenity(@PathVariable("categoryId") String categoryId) {
         CategoryAmenity categoryAmenity = categoryAmenityService.getCategoryAmenity(categoryId);
         CustomDto categoryAmenityDto = this.modelMapper.map(categoryAmenity, CustomDto.class);
@@ -65,7 +67,7 @@ public class CategoryAmenityController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("protected/categoryAmenities/{categoryId}")
+    @DeleteMapping("categoryAmenities/{categoryId}")
     public ResponseEntity<ResponseMessage> deleteCategoryAmenity(@PathVariable("categoryId") String categoryId) {
         categoryAmenityService.deleteCategoryAmenity(categoryId);
         message = "CategoryAmenity deleted successfully!";

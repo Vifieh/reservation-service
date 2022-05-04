@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Amenity;
 import com.reservation.reservationservice.model.CategoryAmenity;
@@ -33,6 +34,10 @@ public class AmenityServiceImpl implements AmenityService {
     public void createAmenity(String categoryId, Amenity amenity) {
         User user = userService.getAuthUser();
         CategoryAmenity categoryAmenity = categoryAmenityService.getCategoryAmenity(categoryId);
+        Optional<Amenity> amenity1 = amenityRepository.findByName(amenity.getName());
+        if (amenity1.isPresent()) {
+            throw new ResourceAlreadyExistException("Amenity already exist");
+        }
         amenity.setId(util.generateId());
         amenity.setUser(user);
         amenity.setCreatedBy(user.getEmail());

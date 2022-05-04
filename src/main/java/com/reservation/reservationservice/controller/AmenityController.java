@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/protected/")
 @CrossOrigin
 @RestController
 public class AmenityController {
@@ -31,7 +31,7 @@ public class AmenityController {
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("protected/amenities/categoryAmenities/{categoryId}")
+    @PostMapping("amenities/categoryAmenities/{categoryId}")
     public ResponseEntity<ResponseMessage> createAmenity(@PathVariable("categoryId") String categoryId,
                                                              @RequestBody @Valid CustomPayload amenityPayload) {
         Amenity amenity = convertAmenityToAmenityPayload(amenityPayload);
@@ -41,7 +41,7 @@ public class AmenityController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("protected/amenities/{amenityId}")
+    @PatchMapping("amenities/{amenityId}")
     public ResponseEntity<ResponseMessage> editAmenity(@PathVariable("amenityId") String amenityId,
                                                                @RequestBody @Valid CustomPayload amenityPayload) {
         Amenity amenity = convertAmenityToAmenityPayload(amenityPayload);
@@ -50,14 +50,16 @@ public class AmenityController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("public/amenities")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("amenities")
     public ResponseEntity<List<CustomDto>> getAmenities() {
         List<Amenity> amenities = amenityService.getAllAmenities();
         List<CustomDto> amenityDtos = convertCitiesToCityDtos(amenities);
         return new ResponseEntity<>(amenityDtos, HttpStatus.OK);
     }
 
-    @GetMapping("public/amenities/categoryAmenities/{categoryId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("amenities/categoryAmenities/{categoryId}")
     public ResponseEntity<List<CustomDto>> getAmenitiesByCategory(@PathVariable("categoryId")String categoryId) {
         List<Amenity> amenities = amenityService.getAmenitiesByCategory(categoryId);
         List<CustomDto> amenityDtos = convertCitiesToCityDtos(amenities);
@@ -65,7 +67,8 @@ public class AmenityController {
 
     }
 
-    @GetMapping("public/amenities/{amenityId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("amenities/{amenityId}")
     public ResponseEntity<CustomDto> getAmenity(@PathVariable("amenityId") String amenityId) {
         Amenity amenity = amenityService.getAmenity(amenityId);
         CustomDto amenityDto = this.modelMapper.map(amenity, CustomDto.class);
@@ -73,7 +76,7 @@ public class AmenityController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("protected/amenities/{amenityId}")
+    @DeleteMapping("amenities/{amenityId}")
     public ResponseEntity<ResponseMessage> deleteAmenity(@PathVariable("amenityId") String amenityId) {
         amenityService.deleteAmenity(amenityId);
         message = "Amenity deleted successfully!";

@@ -16,6 +16,10 @@ public class Property extends BaseEntity{
     private int rating;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "propertyType_id")
     private PropertyType propertyType;
 
