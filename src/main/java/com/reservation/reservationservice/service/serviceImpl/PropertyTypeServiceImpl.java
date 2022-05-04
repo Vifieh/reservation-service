@@ -58,7 +58,7 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
     public PropertyType getPropertyType(String propertyTypeId) {
         Optional<PropertyType> propertyType = propertyTypeRepository.findById(propertyTypeId);
         propertyType.orElseThrow(() ->
-                new ResourceNotFoundException("PropertyType not found with id - " + propertyTypeId));
+                new ResourceNotFoundException("Property type not found with id - " + propertyTypeId));
         return propertyType.get();
     }
 

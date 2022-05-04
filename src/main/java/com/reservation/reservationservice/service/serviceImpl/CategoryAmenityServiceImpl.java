@@ -57,7 +57,7 @@ public class CategoryAmenityServiceImpl implements CategoryAmenityService {
     public CategoryAmenity getCategoryAmenity(String categoryId) {
         Optional<CategoryAmenity> categoryAmenity = categoryAmenityRepository.findById(categoryId);
         categoryAmenity.orElseThrow(() ->
-                new ResourceNotFoundException("CategoryAmenity not found with id - " + categoryId));
+                new ResourceNotFoundException("Category Amenity not found with id - " + categoryId));
         return categoryAmenity.get();
     }
 

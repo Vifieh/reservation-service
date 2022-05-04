@@ -13,11 +13,15 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class RoomName {
+public class RoomName extends BaseEntity{
 
     @Id
     private String id;
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "roomType_id")
