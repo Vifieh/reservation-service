@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity{
 
     @Id
     private String id;
@@ -31,13 +31,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ConfirmationToken> tokens;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_contactDetails",
-            joinColumns =
-                    { @JoinColumn(name = "user_id", referencedColumnName = "id") },
-            inverseJoinColumns =
-                    { @JoinColumn(name = "contact_id", referencedColumnName = "id") })
-    private ContactDetails contactDetails;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private UserContactDetails userContactDetails;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Country> countries;

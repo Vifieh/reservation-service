@@ -1,11 +1,14 @@
 package com.reservation.reservationservice.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import lombok.*;
 
+import javax.persistence.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class ContactDetails {
+public class UserContactDetails extends BaseEntity{
 
     @Id
     private String id;
@@ -13,6 +16,7 @@ public class ContactDetails {
     private String lastName;
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "contactDetails")
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

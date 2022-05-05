@@ -78,6 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setId(util.generateId());
         user.setEmail(registerPayload.getEmail());
         user.setPassword(passwordEncoder.encode(registerPayload.getPassword()));
+        user.setCreatedBy(registerPayload.getEmail());
         if (registerPayload.getRole().equals("USER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_USER));
         }

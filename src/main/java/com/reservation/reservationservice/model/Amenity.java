@@ -24,7 +24,7 @@ public class Amenity extends BaseEntity{
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "categoryAmenity_id")
     private CategoryAmenity categoryAmenity;
 
 }
