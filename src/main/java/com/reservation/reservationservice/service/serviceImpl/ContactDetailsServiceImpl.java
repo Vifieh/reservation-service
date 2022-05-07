@@ -1,8 +1,10 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
-import com.reservation.reservationservice.model.User;
-import com.reservation.reservationservice.model.UserContactDetails;
+import com.reservation.reservationservice.model.*;
+import com.reservation.reservationservice.repository.PropertyAddressRepository;
+import com.reservation.reservationservice.repository.PropertyContactDetailsRepository;
+import com.reservation.reservationservice.repository.PropertyRepository;
 import com.reservation.reservationservice.repository.UserContactDetailsRepository;
 import com.reservation.reservationservice.service.ContactDetailsService;
 import com.reservation.reservationservice.service.UserService;
@@ -22,6 +24,13 @@ public class ContactDetailsServiceImpl implements ContactDetailsService {
 
     @Autowired
     UserContactDetailsRepository contactDetailsRepository;
+
+    @Autowired
+    PropertyContactDetailsRepository propertyContactDetailsRepository;
+
+    @Autowired
+    PropertyAddressRepository propertyAddressRepository;
+
 
     @Override
     public void addContactDetails(UserContactDetails userContactDetails) {
@@ -51,5 +60,21 @@ public class ContactDetailsServiceImpl implements ContactDetailsService {
         return userContactDetails.get();
     }
 
+    @Override
+    public PropertyContactDetails addPropertyContactDetails(Property property, PropertyContactDetails propertyContactDetails) {
+        User user = userService.getAuthUser();
+        propertyContactDetails.setId(util.generateId());
+        propertyContactDetails.setCreatedBy(user.getEmail());
+        propertyContactDetails.setProperty(property);
+       return propertyContactDetailsRepository.save(propertyContactDetails);
+    }
 
+    @Override
+    public PropertyAddress addPropertyAddress(Property property, PropertyAddress propertyAddress) {
+        User user = userService.getAuthUser();
+        propertyAddress.setId(util.generateId());
+        propertyAddress.setProperty(property);
+        propertyAddress.setCreatedBy(user.getEmail());
+      return  propertyAddressRepository.save(propertyAddress);
+    }
 }

@@ -40,7 +40,7 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public void editCountry(String countryId, Country country) {
         User user = userService.getAuthUser();
-            Country country1 = getCountry(countryId);
+        Country country1 = getCountry(countryId);
             country1.setName(country.getName());
             country1.setUser(user);
             country1.setCreatedBy(user.getEmail());

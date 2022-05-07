@@ -4,7 +4,6 @@ import com.reservation.reservationservice.exception.BadRequestException;
 import com.reservation.reservationservice.model.Email;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.service.EmailService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

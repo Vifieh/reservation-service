@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.City;
 import com.reservation.reservationservice.model.Country;
@@ -28,9 +29,14 @@ public class CityServiceImpl implements CityService {
     @Autowired
     CountryService countryService;
 
+
     @Override
     public void createCity(String countryId, City city) {
         User user = userService.getAuthUser();
+        Optional<City> city1= cityRepository.findByName(city.getName());
+        if (city1.isPresent()) {
+            throw new ResourceAlreadyExistException("City already exist");
+        }
         Country country = countryService.getCountry(countryId);
         city.setId(util.generateId());
         city.setUser(user);

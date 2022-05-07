@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,6 +29,7 @@ public class RoomNameController {
 
     private String message = null;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("roomNames/roomTypes/{roomTypeId}")
     public ResponseEntity<ResponseMessage> createRoomName(@PathVariable("roomTypeId") String roomTypeId,
                                                           @RequestBody @Valid CustomPayload roomNamePayload) {
@@ -37,6 +39,7 @@ public class RoomNameController {
        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("roomNames/{roomNameId}")
     public ResponseEntity<ResponseMessage> editRoomName(@PathVariable("roomNameId") String roomNameId,
                                                           @RequestBody @Valid CustomPayload roomNamePayload) {
@@ -46,6 +49,7 @@ public class RoomNameController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("roomNames")
     public ResponseEntity<List<CustomDto>> getRoomNames() {
         List<RoomName> roomNames = roomNameService.getAllRoomNames();
@@ -60,6 +64,7 @@ public class RoomNameController {
         return new ResponseEntity<>(roomNameDtos, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("roomNames/{roomNameId}")
     public ResponseEntity<CustomDto> getRoomName(@PathVariable("roomNameId") String roomNameId) {
         RoomName roomName = roomNameService.getRoomName(roomNameId);

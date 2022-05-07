@@ -6,20 +6,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Bed {
+public class BedOption {
 
     @Id
     private String id;
-    private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "property_id")
-    private Property property;
+    private int numberOfBeds;
+    private int numberOfGuests;
 }

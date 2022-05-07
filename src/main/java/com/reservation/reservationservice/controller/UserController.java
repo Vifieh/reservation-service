@@ -40,7 +40,7 @@ public class UserController {
     @GetMapping("users/user_profile")
     public ResponseEntity<UserDetailsDto> getUserProfile() {
        User user = userService.getAuthUser();
-        ContactDetailsDto contactDetailsDto = modelMapper.map(user.getUserContactDetails(), ContactDetailsDto.class);
+        ContactDetailsDto contactDetailsDto = convertContactDetailsToContactDetailsDto(user);
        UserDetailsDto userDetailsDto = new UserDetailsDto(user.getId(), user.getEmail(),
                contactDetailsDto, user.getRole());
         return new ResponseEntity<>(userDetailsDto, HttpStatus.OK);
@@ -69,15 +69,16 @@ public class UserController {
     @GetMapping("users")
     public ResponseEntity<List<UserDetailsDto>> getUsers() {
         List<User> users = userService.getAllUsers();
-        List<UserDetailsDto> userDetailsDtos = convertUsersToUserDtos(users);
+        List<UserDetailsDto> userDetailsDtos = convertUsersToUserDetailDtos(users);
         return new ResponseEntity<>(userDetailsDtos, HttpStatus.OK);
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("users/role_user")
     public ResponseEntity<List<UserDetailsDto>> getUsersByRoleUser() {
         List<User> users = userService.getAllUsersByRoleUser();
-        List<UserDetailsDto> userDetailsDtos = convertUsersToUserDtos(users);
+        List<UserDetailsDto> userDetailsDtos = convertUsersToUserDetailDtos(users);
         return new ResponseEntity<>(userDetailsDtos, HttpStatus.OK);
     }
 
@@ -85,12 +86,18 @@ public class UserController {
     @GetMapping("users/{userId}")
     public ResponseEntity<UserDetailsDto> getUser(@PathVariable("userId") String userId) {
         User user = userService.getUser(userId);
-        UserDetailsDto userDetailsDto = this.modelMapper.map(user, UserDetailsDto.class);
+        ContactDetailsDto contactDetailsDto = convertContactDetailsToContactDetailsDto(user);
+        UserDetailsDto userDetailsDto = new UserDetailsDto(user.getId(), user.getEmail(),
+                contactDetailsDto, user.getRole());
         return new ResponseEntity<>(userDetailsDto, HttpStatus.OK);
     }
 
-    private List<UserDetailsDto> convertUsersToUserDtos(List<User> users) {
+    private ContactDetailsDto convertContactDetailsToContactDetailsDto(User user) {
+        return modelMapper.map(user.getUserContactDetails(), ContactDetailsDto.class);
+    }
+
+    private List<UserDetailsDto> convertUsersToUserDetailDtos(List<User> users) {
         return users.stream().map(user ->
-                this.modelMapper.map(user, UserDetailsDto.class)).collect(Collectors.toList());
+                        this.modelMapper.map(user, UserDetailsDto.class)).collect(Collectors.toList());
     }
 }

@@ -21,8 +21,6 @@ import java.util.Set;
 public class SwaggerConfig {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final Set<String> CONSUMES =
-            new HashSet<String>(Arrays.asList("multipart/form-data"));
     private static final Set<String> DATA =
             new HashSet<String>(Arrays.asList("application/json"));
 

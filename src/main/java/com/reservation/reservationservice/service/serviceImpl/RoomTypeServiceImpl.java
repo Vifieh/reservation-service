@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.RoomType;
 import com.reservation.reservationservice.model.User;
@@ -23,10 +24,13 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     @Autowired
     UserService userService;
 
-
     @Override
     public void createRoomType(RoomType roomType) {
         User user = userService.getAuthUser();
+        Optional<RoomType> roomType1 = roomTypeRepository.findByName(roomType.getName());
+        if (roomType1.isPresent()) {
+            throw new ResourceAlreadyExistException("Room Type already exist");
+        }
         roomType.setId(util.generateId());
         roomType.setUser(user);
         roomType.setCreatedBy(user.getEmail());

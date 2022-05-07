@@ -1,6 +1,8 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
+import com.reservation.reservationservice.model.City;
 import com.reservation.reservationservice.model.RoomName;
 import com.reservation.reservationservice.model.RoomType;
 import com.reservation.reservationservice.model.User;
@@ -32,6 +34,10 @@ public class RoomNameServiceImpl implements RoomNameService {
     @Override
     public void createRoomName(String roomTypeId, RoomName roomName) {
         User user = userService.getAuthUser();
+        Optional<RoomName> city1= roomNameRepository.findByName(roomName.getName());
+        if (city1.isPresent()) {
+            throw new ResourceAlreadyExistException("Room name already exist");
+        }
         RoomType roomType = roomTypeService.getRoomType(roomTypeId);
         roomName.setId(util.generateId());
         roomName.setUser(user);
