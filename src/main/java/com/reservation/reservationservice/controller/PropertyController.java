@@ -1,7 +1,11 @@
 package com.reservation.reservationservice.controller;
 
 import com.reservation.reservationservice.dto.PropertyDto;
+import com.reservation.reservationservice.dto.ResponseMessage;
+import com.reservation.reservationservice.dto.SuccessResponse;
+import com.reservation.reservationservice.model.Parking;
 import com.reservation.reservationservice.model.Property;
+import com.reservation.reservationservice.payload.ParkingPayload;
 import com.reservation.reservationservice.payload.PropertyPayload;
 import com.reservation.reservationservice.service.PropertyService;
 import org.modelmapper.ModelMapper;
@@ -28,14 +32,22 @@ public class PropertyController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("properties/propertyTypes/{propertyTypeId}")
-    public ResponseEntity<PropertyDto> createProperty(@PathVariable("propertyTypeId") String propertyTypeId,
-                                                      @RequestBody @Valid PropertyPayload propertyPayload) {
+    public ResponseEntity<SuccessResponse> createProperty(@PathVariable("propertyTypeId") String propertyTypeId,
+                                                          @RequestBody @Valid PropertyPayload propertyPayload) {
         Property property = this.modelMapper.map(propertyPayload, Property.class);
         Property property1 = propertyService.saveProperty(propertyTypeId, property);
-        PropertyDto propertyDto = this.modelMapper.map(property1, PropertyDto.class);
-        return new ResponseEntity<>(propertyDto, HttpStatus.CREATED);
+        message = "Property created successfully!";
+        return new ResponseEntity<>(new SuccessResponse(message, property1.getId()), HttpStatus.CREATED);
     }
 
-
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("parking/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addParkingFacility(@PathVariable("propertyId") String propertyId,
+                                                              @RequestBody @Valid ParkingPayload parkingPayload) {
+        Parking parking = this.modelMapper.map(parkingPayload, Parking.class);
+        propertyService.addParkingFacility(propertyId, parking);
+        message = "Parking facility added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
 
 }

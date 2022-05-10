@@ -15,6 +15,9 @@ public class RoomType extends BaseEntity{
     private String id;
     private String name;
 
+    @OneToOne(mappedBy = "roomType")
+    private Room room;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

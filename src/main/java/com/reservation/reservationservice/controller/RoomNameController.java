@@ -72,6 +72,14 @@ public class RoomNameController {
         return new ResponseEntity<>(roomNameDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("roomNames/{roomNameId}")
+    public ResponseEntity<ResponseMessage> deleteRoomName(@PathVariable String roomNameId) {
+        roomNameService.deleteRoomName(roomNameId);
+        message = "Room name deleted successfully!";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
+
     private RoomName convertRoomNamePayloadToRoomName(CustomPayload roomNamePayload) {
         return this.modelMapper.map(roomNamePayload, RoomName.class);
     }

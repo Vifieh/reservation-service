@@ -1,6 +1,5 @@
 package com.reservation.reservationservice.exception;
 
-import com.reservation.reservationservice.dto.ResponseMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception  ex, HttpServletRequest request) {
-
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setTitle("EXCEPTION");
-        exceptionResponse.setMessage(ex.getMessage());
-        exceptionResponse.setEndpoint(request.getRequestURI());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleResourceNotFoundExceptions(ResourceNotFoundException ex,

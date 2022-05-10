@@ -11,16 +11,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class BedAvailable extends BaseEntity{
+public class Language extends BaseEntity{
 
     @Id
     private String id;
     private String name;
 
-    @OneToMany(mappedBy = "bedAvailable")
-    List<BedOption> bedOptions;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "languages")
+    List<Property> properties;
 }
+

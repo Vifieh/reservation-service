@@ -1,24 +1,23 @@
 package com.reservation.reservationservice.model;
 
-import com.reservation.reservationservice.constants.Available;
-import com.reservation.reservationservice.constants.Site;
-import com.reservation.reservationservice.constants.Type;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Facility {
+public class Facility extends BaseEntity{
 
     @Id
     private String id;
-    private String  name;
-    private Available available;
+    private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

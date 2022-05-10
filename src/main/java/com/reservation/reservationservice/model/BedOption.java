@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +12,19 @@ import javax.persistence.Id;
 @Entity
 public class BedOption {
 
-    @Id
-    private String id;
+    @EmbeddedId
+    private BedOptionKey id;
+
+    @ManyToOne
+    @MapsId("bedAvailableId")
+    @JoinColumn(name = "bedAvailable_Id")
+    private BedAvailable bedAvailable;
+
+    @ManyToOne
+    @MapsId("roomId")
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     private int numberOfBeds;
     private int numberOfGuests;
 }

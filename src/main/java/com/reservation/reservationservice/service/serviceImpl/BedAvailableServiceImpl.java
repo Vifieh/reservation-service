@@ -31,7 +31,7 @@ public class BedAvailableServiceImpl implements BedAvailableService {
         User user = userService.getAuthUser();
         Optional<BedAvailable> bedAvailable1= bedAvailableRepository.findByName(bedAvailable.getName());
         if (bedAvailable1.isPresent()) {
-            throw new ResourceAlreadyExistException("City already exist");
+            throw new ResourceAlreadyExistException("Bed Available already exist");
         }
         bedAvailable.setId(util.generateId());
         bedAvailable.setUser(user);
@@ -54,7 +54,7 @@ public class BedAvailableServiceImpl implements BedAvailableService {
     @Override
     public BedAvailable getBedAvailable(String bedId) {
         Optional<BedAvailable> bedAvailable = bedAvailableRepository.findById(bedId);
-        bedAvailable.orElseThrow(() -> new ResourceNotFoundException("Bed not found with id -  " + bedId));
+        bedAvailable.orElseThrow(() -> new ResourceNotFoundException("Bed available not found with id -  " + bedId));
         return bedAvailable.get();
     }
 

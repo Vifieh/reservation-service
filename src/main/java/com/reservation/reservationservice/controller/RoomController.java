@@ -1,9 +1,8 @@
 package com.reservation.reservationservice.controller;
 
 import com.reservation.reservationservice.dto.ResponseMessage;
-import com.reservation.reservationservice.dto.SuccessResponse;
-import com.reservation.reservationservice.model.RoomName;
-import com.reservation.reservationservice.payload.CustomPayload;
+import com.reservation.reservationservice.model.Room;
+import com.reservation.reservationservice.payload.RoomPayload;
 import com.reservation.reservationservice.service.RoomService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +24,17 @@ public class RoomController {
     @Autowired
     ModelMapper modelMapper;
 
+    String message = null;
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("protected/rooms")
-    public ResponseEntity<SuccessResponse> createRoomName(@RequestParam("roomTypeId") String roomTypeId,
+    public ResponseEntity<ResponseMessage> createRoomName(@RequestParam("propertyId") String propertyId,
+                                                          @RequestParam("roomTypeId") String roomTypeId,
                                                           @RequestParam("roomNameId") String roomNameId,
-                                                          @RequestParam("bedAvailableId") String bedAvailableId,
-                                                          @RequestBody @Valid) {
-
-        message = "Room Name created successfully!";
+                                                          @RequestBody @Valid RoomPayload roomPayload) {
+        Room room = this.modelMapper.map(roomPayload, Room.class);
+        roomService.createRoom(propertyId, roomTypeId, roomNameId, room);
+        message = "Room created successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/protected/")
 @CrossOrigin
 @RestController
 public class BedAvailableController {
@@ -29,7 +29,7 @@ public class BedAvailableController {
     String message = null;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("protected/bedsAvailable")
+    @PostMapping("bedsAvailable")
     public ResponseEntity<ResponseMessage> createBedAvailable(@RequestBody CustomPayload bedAvailablePayload) {
         BedAvailable bedAvailable = modelMapper.map(bedAvailablePayload, BedAvailable.class);
         bedAvailableService.createBedAvailable(bedAvailable);
@@ -38,7 +38,7 @@ public class BedAvailableController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("protected/bedsAvailable/{bedId}")
+    @PatchMapping("bedsAvailable/{bedId}")
     public ResponseEntity<ResponseMessage> editBedAvailable(@PathVariable String bedId,
                                                             @RequestBody CustomPayload bedAvailablePayload) {
         BedAvailable bedAvailable = modelMapper.map(bedAvailablePayload, BedAvailable.class);
@@ -47,7 +47,8 @@ public class BedAvailableController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("public/bedsAvailable")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("bedsAvailable")
     public ResponseEntity<List<CustomDto>> getBedsAvailable() {
         List<BedAvailable> bedsAvailable = bedAvailableService.getAllBedsAvailable();
         List<CustomDto> bedsAvailableDtos = bedsAvailable.stream().map(bedAvailable ->
@@ -55,11 +56,19 @@ public class BedAvailableController {
         return new ResponseEntity<>(bedsAvailableDtos, HttpStatus.OK);
     }
 
-    @GetMapping("public/bedsAvailable/{bedId}")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("bedsAvailable/{bedId}")
     public ResponseEntity<CustomDto> getBedAvailable(@PathVariable String bedId) {
         BedAvailable bedAvailable = bedAvailableService.getBedAvailable(bedId);
         CustomDto bedsAvailableDto = modelMapper.map(bedAvailable, CustomDto.class);
         return new ResponseEntity<>(bedsAvailableDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("bedsAvailable/{bedId}")
+    public ResponseEntity<ResponseMessage> deleteBedAvailable(@PathVariable String bedId) {
+        bedAvailableService.deleteBedAvailable(bedId);
+        message = "Bed Available deleted successfully!";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
 }
