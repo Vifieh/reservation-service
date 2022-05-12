@@ -20,6 +20,7 @@ public class Room extends BaseEntity{
     private int numberOfRooms;
     private double roomSize;
     private double unitPrice;
+    private int numberOfGuests;
 
     @Enumerated(EnumType.STRING)
     private Size size;
@@ -30,17 +31,12 @@ public class Room extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "roomType_id", referencedColumnName = "id")
-    private RoomType roomType;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "roomName_id", referencedColumnName = "id")
     RoomName roomName;
 
     @OneToMany(mappedBy = "room")
-    List<BedOption> bedOptions;
+    List<RoomBedAvailable> roomBedAvailables;
 
     @ManyToOne
     @JoinColumn(name = "property_id")
@@ -49,4 +45,5 @@ public class Room extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

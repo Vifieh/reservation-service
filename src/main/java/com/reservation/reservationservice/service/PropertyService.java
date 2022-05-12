@@ -14,5 +14,7 @@ public interface PropertyService {
 
     void addParkingFacility(String propertyId, Parking parking);
 
-    void addLanguage(List<Language> languages);
+    void addLanguage(String propertyId, List<Language> languages);
+
+    void addFacities(String propertyId, PropertyFacilty propertyFacilty);
 }

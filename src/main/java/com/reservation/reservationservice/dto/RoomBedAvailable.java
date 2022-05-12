@@ -4,9 +4,8 @@ import com.reservation.reservationservice.model.BedAvailable;
 import lombok.Data;
 
 @Data
-public class BedOptionDto {
+public class RoomBedAvailable {
     private String id;
     private BedAvailable bed;
     private int numberOfBeds;
-    private int numberOfGuests;
 }

@@ -18,7 +18,7 @@ public class BedAvailable extends BaseEntity{
     private String name;
 
     @OneToMany(mappedBy = "bedAvailable")
-    List<BedOption> bedOptions;
+    List<RoomBedAvailable> roomBedAvailables;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -14,5 +14,7 @@ public interface LanguageService {
 
     Language getLanguage(String languageId);
 
+    Language getLanguageByName(String name);
+
     void deleteLanguage(String languageId);
 }

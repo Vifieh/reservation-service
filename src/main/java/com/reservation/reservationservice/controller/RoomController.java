@@ -1,6 +1,7 @@
 package com.reservation.reservationservice.controller;
 
 import com.reservation.reservationservice.dto.ResponseMessage;
+import com.reservation.reservationservice.model.RoomBedAvailable;
 import com.reservation.reservationservice.model.Room;
 import com.reservation.reservationservice.payload.RoomPayload;
 import com.reservation.reservationservice.service.RoomService;
@@ -12,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("api/v1/")
 @CrossOrigin
@@ -26,14 +29,12 @@ public class RoomController {
 
     String message = null;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("protected/rooms")
-    public ResponseEntity<ResponseMessage> createRoomName(@RequestParam("propertyId") String propertyId,
-                                                          @RequestParam("roomTypeId") String roomTypeId,
-                                                          @RequestParam("roomNameId") String roomNameId,
-                                                          @RequestBody @Valid RoomPayload roomPayload) {
-        Room room = this.modelMapper.map(roomPayload, Room.class);
-        roomService.createRoom(propertyId, roomTypeId, roomNameId, room);
+    public ResponseEntity<ResponseMessage> createRoom(@RequestParam("propertyId") String propertyId,
+                                                      @RequestParam("roomNameId") String roomNameId,
+                                                      @RequestBody @Valid RoomPayload roomPayload) {
+        roomService.createRoom(propertyId, roomNameId, roomPayload);
         message = "Room created successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }

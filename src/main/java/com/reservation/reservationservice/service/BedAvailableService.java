@@ -14,5 +14,7 @@ public interface BedAvailableService {
 
     BedAvailable getBedAvailable(String bedId);
 
+    BedAvailable getBedAvailableByName(String name);
+
     void deleteBedAvailable(String bedId);
 }

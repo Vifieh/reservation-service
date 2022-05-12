@@ -15,6 +15,7 @@ public class RoomPayload {
     private int numberOfRooms;
     private double roomSize;
     private double unitPrice;
+    private int numberOfGuests;
 
     @Enumerated(EnumType.STRING)
     private Size size;
@@ -25,7 +26,7 @@ public class RoomPayload {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private List<BedOptionPayload> bedOptionPayloadList;
+    private List<RoomBedAvailablePayload> roomBedAvailablePayloadList;
 
 
 }

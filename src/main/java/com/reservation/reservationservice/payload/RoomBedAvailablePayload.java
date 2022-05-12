@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BedOptionPayload {
+public class RoomBedAvailablePayload {
 
     private String bedAvailableId;
     private int numberOfBeds;
-    private int numberOfGuests;
 }

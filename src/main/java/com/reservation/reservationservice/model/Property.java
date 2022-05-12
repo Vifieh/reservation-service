@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,7 +40,7 @@ public class Property extends BaseEntity{
     private PropertyType propertyType;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "property_language", joinColumns = @JoinColumn(name = "property_id", referencedColumnName = "id"),
+    @JoinTable(name = "property_languages", joinColumns = @JoinColumn(name = "property_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "language_id", referencedColumnName = "id"))
     private List<Language> languages;
 }

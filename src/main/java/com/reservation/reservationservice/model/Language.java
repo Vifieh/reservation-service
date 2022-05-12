@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Language extends BaseEntity{
     private User user;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "languages")
+    @JsonIgnore
     List<Property> properties;
 }
 

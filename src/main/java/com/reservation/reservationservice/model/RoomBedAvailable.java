@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class BedOption {
+public class RoomBedAvailable {
 
     @EmbeddedId
     private BedOptionKey id;
@@ -26,5 +26,5 @@ public class BedOption {
     private Room room;
 
     private int numberOfBeds;
-    private int numberOfGuests;
+
 }

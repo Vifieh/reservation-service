@@ -167,7 +167,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .collect(Collectors.toList());
         RefreshToken refreshToken = createRefreshToken(userDetails.getUser().getId());
 
-        return new LoginDto(jwt, refreshToken.getToken(), userDetails.getUser().getId(),
+        return new LoginDto(jwt, refreshToken.getToken(), userDetails.getUser().getId(), refreshToken.getExpiryDate(),
                 userDetails.getUsername(),roles);
     }
 

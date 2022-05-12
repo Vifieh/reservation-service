@@ -1,20 +1,16 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
-import com.reservation.reservationservice.dto.PropertyDto;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Language;
 import com.reservation.reservationservice.model.Parking;
 import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.model.User;
-import com.reservation.reservationservice.payload.PropertyPayload;
 import com.reservation.reservationservice.repository.ParkingRepository;
 import com.reservation.reservationservice.repository.PropertyRepository;
-import com.reservation.reservationservice.service.ContactDetailsService;
-import com.reservation.reservationservice.service.PropertyService;
-import com.reservation.reservationservice.service.PropertyTypeService;
-import com.reservation.reservationservice.service.UserService;
+import com.reservation.reservationservice.service.*;
 import com.reservation.reservationservice.util.Util;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class PropertyServiceImpl implements PropertyService {
     private final Util util = new Util();
 
@@ -39,6 +36,9 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
     PropertyTypeService propertyTypeService;
+
+    @Autowired
+    LanguageService languageService;
 
     @Override
     public Property saveProperty(String propertyTypeId, Property property) {
@@ -76,9 +76,13 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public void addLanguage(List<Language> languages) {
+    public void addLanguage(String propertyId, List<Language> languages) {
+        Property property = getProperty(propertyId);
+        for (Language language: languages) {
+            Language language1 = languageService.getLanguageByName(language.getName());
+            property.getLanguages().add(language1);
+            propertyRepository.saveAndFlush(property);
+        }
 
     }
-
-
 }

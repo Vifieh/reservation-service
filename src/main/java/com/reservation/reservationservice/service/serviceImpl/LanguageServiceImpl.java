@@ -58,6 +58,13 @@ public class LanguageServiceImpl implements LanguageService {
     }
 
     @Override
+    public Language getLanguageByName(String name) {
+        Optional<Language> language = languageRepository.findByName(name);
+        language.orElseThrow(() -> new ResourceNotFoundException("Language not found with name -  " + name));
+        return language.get();
+    }
+
+    @Override
     public void deleteLanguage(String languageId) {
         languageRepository.deleteById(languageId);
     }
