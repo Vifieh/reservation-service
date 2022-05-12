@@ -31,6 +31,9 @@ public class Property extends BaseEntity{
     @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Room> rooms;
 
+    @OneToMany(mappedBy = "property")
+    List<PropertyFacility> propertyFacilities;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -67,7 +66,7 @@ public class RoomServiceImpl implements RoomService {
         for (RoomBedAvailablePayload roomBedAvailablePayload : roomPayload.getRoomBedAvailablePayloadList()) {
             BedAvailable bedAvailable = bedAvailableService.getBedAvailable(roomBedAvailablePayload.getBedAvailableId());
             RoomBedAvailable roomBedAvailable = new RoomBedAvailable();
-            roomBedAvailable.setId(new BedOptionKey(bedAvailable.getId(), room1.getId()));
+            roomBedAvailable.setId(new RoomBedAvailableKey(bedAvailable.getId(), room1.getId()));
             roomBedAvailable.setRoom(room1);
             roomBedAvailable.setBedAvailable(bedAvailable);
             roomBedAvailable.setNumberOfBeds(roomBedAvailablePayload.getNumberOfBeds());

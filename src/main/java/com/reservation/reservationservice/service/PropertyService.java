@@ -3,6 +3,7 @@ package com.reservation.reservationservice.service;
 import com.reservation.reservationservice.model.Language;
 import com.reservation.reservationservice.model.Parking;
 import com.reservation.reservationservice.model.Property;
+import com.reservation.reservationservice.model.PropertyFacility;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface PropertyService {
 
     void addLanguage(String propertyId, List<Language> languages);
 
-    void addFacities(String propertyId, PropertyFacilty propertyFacilty);
+    void addFacilities(String propertyId, PropertyFacility propertyFacility);
 }

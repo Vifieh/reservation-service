@@ -2,10 +2,7 @@ package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
-import com.reservation.reservationservice.model.Language;
-import com.reservation.reservationservice.model.Parking;
-import com.reservation.reservationservice.model.Property;
-import com.reservation.reservationservice.model.User;
+import com.reservation.reservationservice.model.*;
 import com.reservation.reservationservice.repository.ParkingRepository;
 import com.reservation.reservationservice.repository.PropertyRepository;
 import com.reservation.reservationservice.service.*;
@@ -85,4 +82,11 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
     }
+
+    @Override
+    public void addFacilities(String propertyId, PropertyFacility propertyFacility) {
+
+    }
+
+
 }

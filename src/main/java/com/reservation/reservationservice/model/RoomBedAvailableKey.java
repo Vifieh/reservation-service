@@ -10,7 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class BedOptionKey implements Serializable {
+public class RoomBedAvailableKey implements Serializable {
 
     @Column(name = "bedAvailable_id")
     private String bedAvailableId;

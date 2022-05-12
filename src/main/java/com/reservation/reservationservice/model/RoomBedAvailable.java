@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class RoomBedAvailable {
 
     @EmbeddedId
-    private BedOptionKey id;
+    private RoomBedAvailableKey id;
 
     @ManyToOne
     @MapsId("bedAvailableId")

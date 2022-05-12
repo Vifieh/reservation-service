@@ -17,6 +17,9 @@ public class Facility extends BaseEntity{
     private String id;
     private String name;
 
+    @OneToMany(mappedBy = "facility")
+    List<PropertyFacility> propertyFacilities;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
