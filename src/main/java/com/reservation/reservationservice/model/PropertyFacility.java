@@ -26,6 +26,7 @@ public class PropertyFacility {
     @JoinColumn(name = "facility_id")
     private Facility facility;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
 }

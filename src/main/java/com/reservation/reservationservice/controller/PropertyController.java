@@ -6,9 +6,7 @@ import com.reservation.reservationservice.dto.SuccessResponse;
 import com.reservation.reservationservice.model.Language;
 import com.reservation.reservationservice.model.Parking;
 import com.reservation.reservationservice.model.Property;
-import com.reservation.reservationservice.payload.CustomPayload;
-import com.reservation.reservationservice.payload.ParkingPayload;
-import com.reservation.reservationservice.payload.PropertyPayload;
+import com.reservation.reservationservice.payload.*;
 import com.reservation.reservationservice.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,7 @@ public class PropertyController {
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @PostMapping("language/properties/{propertyId}")
+    @PostMapping("languages/properties/{propertyId}")
     public ResponseEntity<ResponseMessage> addLanguage(@PathVariable("propertyId") String propertyId,
                                                               @RequestBody @Valid List<CustomPayload> languagePayload) {
         List<Language> languages = languagePayload.stream().map(language ->
@@ -65,4 +63,23 @@ public class PropertyController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("facilities/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addFacilities(@PathVariable("propertyId") String propertyId,
+                                                       @RequestBody @Valid List<PropertyFacilityPayload> propertyFacilityPayloads) {
+
+        propertyService.addFacilities(propertyId, propertyFacilityPayloads);
+        message = "Facilities added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("breakfast/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addBreakfast(@PathVariable("propertyId") String propertyId,
+                                                         @RequestBody @Valid BreakfastPayload breakfastPayload) {
+
+        propertyService.addBreakfast(propertyId, breakfastPayload);
+        message = "Breakfast added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
 }

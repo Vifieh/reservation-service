@@ -1,6 +1,5 @@
 package com.reservation.reservationservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,6 +26,9 @@ public class Property extends BaseEntity{
 
     @OneToOne(mappedBy = "property")
     Parking parking;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    Breakfast breakfast;
 
     @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Room> rooms;
