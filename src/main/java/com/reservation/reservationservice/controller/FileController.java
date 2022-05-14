@@ -29,12 +29,12 @@ public class FileController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "protected/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseMessage> uploadFiles(@RequestPart("files")MultipartFile[] files) {
+    public ResponseEntity<ResponseMessage> uploadFiles(@RequestParam String directory, @RequestPart("files")MultipartFile[] files) {
         String message = "";
         try {
             List<String> fileNames = new ArrayList<>();
             Arrays.asList(files).stream().forEach(file -> {
-                fileStorageService.save(file);
+                fileStorageService.save(directory, file);
                 fileNames.add(file.getOriginalFilename());
             });
             message = "Uploaded the files successfully: " + fileNames;
@@ -46,19 +46,19 @@ public class FileController {
     }
 
     @GetMapping("public/files")
-    public ResponseEntity<List<FileInfo>> getListFiles() {
-        List<FileInfo> fileInfos = fileStorageService.loadAll().map(path -> {
+    public ResponseEntity<List<FileInfo>> getListFiles(@RequestParam String directory) {
+        List<FileInfo> fileInfos = fileStorageService.loadAll(directory).map(path -> {
         String filename = path.getFileName().toString();
         String url = MvcUriComponentsBuilder
-                .fromMethodName(FileController.class, "getFile", path.getFileName().toString()).build().toString();
+                .fromMethodName(FileController.class, "getFile", directory, path.getFileName().toString()).build().toString();
         return new FileInfo(filename, url);
         }).collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
     }
 
-    @GetMapping("public/files/{filename:.+}")
-    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-        Resource file = fileStorageService.load(filename);
+    @GetMapping("public/files/{directory}/{filename:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String directory, @PathVariable String filename) {
+        Resource file = fileStorageService.load(directory, filename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
