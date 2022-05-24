@@ -50,7 +50,7 @@ public class CategoryAmenityController {
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("categoryAmenities")
-    public ResponseEntity<List<CustomDto>> getCategoriesAmenities() {
+    public ResponseEntity<List<CustomDto>> getAllCategoryAmenity() {
         List<CategoryAmenity> categoryAmenities = categoryAmenityService.getAllCategoriesAmenities();
         List<CustomDto> categoryAmenitiesDto = categoryAmenities.stream()
                 .map(categoryAmenity -> this.modelMapper.map(categoryAmenity, CustomDto.class))

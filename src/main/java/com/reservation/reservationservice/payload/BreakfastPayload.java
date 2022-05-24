@@ -1,9 +1,6 @@
 package com.reservation.reservationservice.payload;
 
 import com.reservation.reservationservice.constants.Available;
-import com.reservation.reservationservice.constants.Currency;
-import com.reservation.reservationservice.constants.Policy;
-import com.reservation.reservationservice.constants.Size;
 import lombok.Data;
 
 import javax.persistence.EnumType;
@@ -18,7 +15,7 @@ public class BreakfastPayload {
     @Enumerated(EnumType.STRING)
     private Available available;
 
-    private List<BreakfastAvailablePayload> breakfastAvailablePayload;
+    private List<DefaultPayload> breakfastAvailablePayload;
 
 }
 

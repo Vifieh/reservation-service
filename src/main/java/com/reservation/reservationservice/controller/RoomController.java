@@ -3,6 +3,7 @@ package com.reservation.reservationservice.controller;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.model.RoomBedAvailable;
 import com.reservation.reservationservice.model.Room;
+import com.reservation.reservationservice.payload.RoomAmenityPayload;
 import com.reservation.reservationservice.payload.RoomPayload;
 import com.reservation.reservationservice.service.RoomService;
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,14 @@ public class RoomController {
                                                       @RequestBody @Valid RoomPayload roomPayload) {
         roomService.createRoom(propertyId, roomNameId, roomPayload);
         message = "Room created successfully!";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("protected/roomAmenities")
+    public ResponseEntity<ResponseMessage> addRoomAmenities(@RequestBody @Valid List<RoomAmenityPayload> roomAmenityPayloadList) {
+        roomService.addRoomAmenities(roomAmenityPayloadList);
+        message = "Room amenities successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 

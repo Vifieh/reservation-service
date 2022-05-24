@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
-    @PutMapping("users")
+    @PutMapping("users/edit-profile")
     public ResponseEntity<ResponseMessage> editUserProfile(@RequestBody @Valid UserPayload userPayload) {
         User user = this.modelMapper.map(userPayload, User.class);
         userService.editUserProfile(user);

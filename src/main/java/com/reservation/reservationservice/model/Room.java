@@ -46,4 +46,9 @@ public class Room extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "rooms_amenities", joinColumns = @JoinColumn(name = "room_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
+    private List<Amenity> amenities;
+
 }

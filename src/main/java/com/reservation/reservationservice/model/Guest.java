@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Amenity extends BaseEntity{
+public class Guest extends BaseEntity{
 
     @Id
     private String id;
@@ -20,15 +20,10 @@ public class Amenity extends BaseEntity{
     @Size(min = 3, message = "Country should have atleast 3 characters")
     private String name;
 
+    @OneToMany(mappedBy = "guest")
+    List<GuestExtraBed> guestExtraBeds;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "categoryAmenity_id")
-    private CategoryAmenity categoryAmenity;
-
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "amenities")
-    private List<Room> rooms;
-
 }

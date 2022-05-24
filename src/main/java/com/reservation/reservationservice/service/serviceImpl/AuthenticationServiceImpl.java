@@ -92,7 +92,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
-        System.out.println(email);
         String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
         emailService.send(user, email,  link);
         userRepository.save(user);

@@ -3,9 +3,7 @@ package com.reservation.reservationservice.controller;
 import com.reservation.reservationservice.dto.PropertyDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.dto.SuccessResponse;
-import com.reservation.reservationservice.model.Language;
-import com.reservation.reservationservice.model.Parking;
-import com.reservation.reservationservice.model.Property;
+import com.reservation.reservationservice.model.*;
 import com.reservation.reservationservice.payload.*;
 import com.reservation.reservationservice.service.PropertyService;
 import org.modelmapper.ModelMapper;
@@ -54,7 +52,7 @@ public class PropertyController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("languages/properties/{propertyId}")
-    public ResponseEntity<ResponseMessage> addLanguage(@PathVariable("propertyId") String propertyId,
+    public ResponseEntity<ResponseMessage> addLanguages(@PathVariable("propertyId") String propertyId,
                                                               @RequestBody @Valid List<CustomPayload> languagePayload) {
         List<Language> languages = languagePayload.stream().map(language ->
                 modelMapper.map(language, Language.class)).collect(Collectors.toList());
@@ -80,6 +78,36 @@ public class PropertyController {
 
         propertyService.addBreakfast(propertyId, breakfastPayload);
         message = "Breakfast added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("extraBedOptions/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addExtraBedOption(@PathVariable("propertyId") String propertyId,
+                                                        @RequestBody @Valid ExtraBedPayload extraBedPayload) {
+
+        propertyService.addExtraBedOption(propertyId, extraBedPayload);
+        message = "Extra bed option added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("policies/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addPolicy(@PathVariable("propertyId") String propertyId,
+                                                        @RequestBody @Valid PolicyPayload policyPayload) {
+
+        propertyService.addPolicy(propertyId, policyPayload);
+        message = "Policy added successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("paymentOptions/properties/{propertyId}")
+    public ResponseEntity<ResponseMessage> addPaymentOptions(@PathVariable("propertyId") String propertyId,
+                                                        @RequestBody @Valid List<CustomPayload> paymentOptionPayload) {
+        List<PaymentOption> paymentOptions = paymentOptionPayload.stream().map(paymentOption ->
+                modelMapper.map(paymentOption, PaymentOption.class)).collect(Collectors.toList());
+        propertyService.adPaymentOption(propertyId, paymentOptions);
+        message = "PaymentOption(s) added successfully";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
 }

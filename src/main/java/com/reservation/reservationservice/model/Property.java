@@ -30,6 +30,12 @@ public class Property extends BaseEntity{
     @OneToOne(cascade = CascadeType.ALL)
     Breakfast breakfast;
 
+    @OneToOne(mappedBy = "property")
+    ExtraBed extraBed;
+
+    @OneToOne(mappedBy = "property")
+    Policy policy;
+
     @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Room> rooms;
 
@@ -48,4 +54,9 @@ public class Property extends BaseEntity{
     @JoinTable(name = "property_languages", joinColumns = @JoinColumn(name = "property_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "language_id", referencedColumnName = "id"))
     private List<Language> languages;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "property_paymentOption", joinColumns = @JoinColumn(name = "property_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "paymentOption_id", referencedColumnName = "id"))
+    private List<PaymentOption> paymentOptions;
 }

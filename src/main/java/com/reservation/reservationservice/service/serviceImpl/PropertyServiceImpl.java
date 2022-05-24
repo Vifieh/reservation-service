@@ -3,13 +3,8 @@ package com.reservation.reservationservice.service.serviceImpl;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.*;
-import com.reservation.reservationservice.payload.BreakfastAvailablePayload;
-import com.reservation.reservationservice.payload.BreakfastPayload;
-import com.reservation.reservationservice.payload.PropertyFacilityPayload;
-import com.reservation.reservationservice.repository.BreakfastRepository;
-import com.reservation.reservationservice.repository.ParkingRepository;
-import com.reservation.reservationservice.repository.PropertyFacilityRepository;
-import com.reservation.reservationservice.repository.PropertyRepository;
+import com.reservation.reservationservice.payload.*;
+import com.reservation.reservationservice.repository.*;
 import com.reservation.reservationservice.service.*;
 import com.reservation.reservationservice.util.Util;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +21,6 @@ public class PropertyServiceImpl implements PropertyService {
     private final Util util = new Util();
 
     @Autowired
-    UserService userService;
-
-    @Autowired
     PropertyRepository propertyRepository;
 
     @Autowired
@@ -39,6 +31,21 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
     BreakfastRepository breakfastRepository;
+
+    @Autowired
+    ExtraBedRepository extraBedRepository;
+
+    @Autowired
+    GuestExtraBedRepository guestExtraBedRepository;
+
+    @Autowired
+    PolicyRepository policyRepository;
+
+    @Autowired
+    PetRepository petRepository;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     ContactDetailsService contactDetailsService;
@@ -54,6 +61,12 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
     BreakfastAvailableService breakfastAvailableService;
+
+    @Autowired
+    GuestService guestService;
+
+    @Autowired
+    PaymentOptionService paymentOptionService;
 
     @Override
     public Property saveProperty(String propertyTypeId, Property property) {
@@ -124,6 +137,61 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    public void addExtraBedOption(String propertyId, ExtraBedPayload extraBedPayload) {
+        User user = userService.getAuthUser();
+        Property property = getProperty(propertyId);
+        ExtraBed extraBed = new ExtraBed();
+        extraBed.setId(util.generateId());
+        extraBed.setNumberOfExtraBeds(extraBedPayload.getNumberOfExtraBeds());
+        extraBed.setUser(user);
+        extraBed.setProperty(property);
+        ExtraBed extraBed1 = extraBedRepository.save(extraBed);
+        extraBedPayload.getGuestExtraBedPayloadList().forEach(guestExtraBedPayload -> {
+            GuestExtraBed guestExtraBed = new GuestExtraBed();
+            Guest guest = guestService.getGuest(guestExtraBedPayload.getGuestId());
+            guestExtraBed.setId(new GuestExtraBedKey(guest.getId(), extraBed1.getId()));
+            guestExtraBed.setExtraBed(extraBed1);
+            guestExtraBed.setGuest(guest);
+            guestExtraBed.setUnitPrice(guestExtraBedPayload.getUnitPrice());
+            guestExtraBed.setRange(guestExtraBedPayload.getRange());
+            guestExtraBedRepository.save(guestExtraBed);
+        });
+    }
+
+    @Override
+    public void addPolicy(String propertyId, PolicyPayload policyPayload) {
+        User user = userService.getAuthUser();
+        Property property = getProperty(propertyId);
+        Pet pet = new Pet();
+        Policy policy = new Policy();
+        policy.setId(util.generateId());
+        policy.setUser(user);
+        policy.setProperty(property);
+        policy.setGuestCanCancel(policyPayload.getGuestCanCancel());
+        policy.setGuestPay(policyPayload.getGuestPay());
+        policy.setCheckInFrom(policyPayload.getCheckInFrom());
+        policy.setCheckInTo(policyPayload.getCheckInTo());
+        policy.setCheckOutFrom(policyPayload.getCheckOutFrom());
+        policy.setCanAccommodateChildren(policyPayload.getCanAccommodateChildren());
+        policyRepository.save(policy);
+        pet.setId(util.generateId());
+        pet.setProperty(property);
+        pet.setAllowPets(policyPayload.getPetPayload().getAllowPets());
+        pet.setCharge(policyPayload.getPetPayload().getCharge());
+        petRepository.save(pet);
+    }
+
+    @Override
+    public void adPaymentOption(String propertyId, List<PaymentOption> paymentOptions) {
+        Property property = getProperty(propertyId);
+        for (PaymentOption paymentOption: paymentOptions) {
+            PaymentOption paymentOption1 = paymentOptionService.getPaymentOptionByName(paymentOption.getName());
+            property.getPaymentOptions().add(paymentOption1);
+            propertyRepository.saveAndFlush(property);
+        }
+    }
+
+    @Override
     public Property getProperty(String propertyId) {
         Optional<Property> property = propertyRepository.findById(propertyId);
         property.orElseThrow(() -> new ResourceNotFoundException("Property not found with id - " + propertyId));
@@ -132,11 +200,13 @@ public class PropertyServiceImpl implements PropertyService {
 
     private List<BreakfastAvailable> addBreakfastAvailable(BreakfastPayload breakfastPayload) {
         List<BreakfastAvailable> breakfastAvailableList = new ArrayList<>();
-        for (BreakfastAvailablePayload breakfastAvailablePayload: breakfastPayload.getBreakfastAvailablePayload()) {
+        for (DefaultPayload breakfastAvailablePayload: breakfastPayload.getBreakfastAvailablePayload()) {
             BreakfastAvailable breakfastAvailable1 =
                     breakfastAvailableService.getBreakfastAvailable(breakfastAvailablePayload.getId());
             breakfastAvailableList.add(breakfastAvailable1);
         }
         return breakfastAvailableList;
     }
+
+
 }

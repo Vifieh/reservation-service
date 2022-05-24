@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface LanguageService {
 
-    void createLanguage(Language Language);
+    void createLanguage(Language language);
 
-    void editLanguage(String languageId, Language Language);
+    void editLanguage(String languageId, Language language);
 
     List<Language> getAllLanguages();
 
