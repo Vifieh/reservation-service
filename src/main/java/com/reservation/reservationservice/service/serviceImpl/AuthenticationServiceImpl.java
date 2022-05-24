@@ -1,7 +1,8 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.config.security.JwtUtils;
-import com.reservation.reservationservice.dto.LoginDTO;
+import com.reservation.reservationservice.constants.ERole;
+import com.reservation.reservationservice.dto.LoginDto;
 import com.reservation.reservationservice.exception.BadRequestException;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
@@ -70,19 +71,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void register(RegisterPayload registerPayload) {
-        Optional<User> user1 = userRepository.findByEmail(registerPayload.getEmail());
-        if (user1.isPresent()) {
-            throw new ResourceAlreadyExistException("User already exist with email: "+ registerPayload.getEmail());
-        }
         List<Role> roleList = new ArrayList<>();
         Email email = new Email();
         User user = new User();
+        Optional<User> user1 = userRepository.findByEmail(registerPayload.getEmail());
         user.setId(util.generateId());
         user.setEmail(registerPayload.getEmail());
         user.setPassword(passwordEncoder.encode(registerPayload.getPassword()));
+        user.setCreatedBy(registerPayload.getEmail());
         if (registerPayload.getRole().equals("USER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_USER));
-        }else {
+        }
+        if (user1.isPresent() || registerPayload.getRole().equals("MANAGER")) {
             roleList.add(roleRepository.findByRole(ERole.ROLE_MANAGER));
         }
         user.setRole(roleList);
@@ -92,7 +92,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
-        System.out.println(email);
         String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
         emailService.send(user, email,  link);
         userRepository.save(user);
@@ -148,9 +147,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public LoginDTO login(User user) {
-        Optional<User> user1 = checkEmail(user.getEmail());
-        if (!user1.get().getEnabled()) {
+    public LoginDto login(User user) {
+        User user1 = checkEmail(user.getEmail());
+        if (!user1.getEnabled()) {
             throw new BadRequestException(user.getEmail() + " has nas not yet confirmed the account");
         }
         Authentication authentication;
@@ -165,10 +164,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        RefreshToken refreshToken = createRefreshToken(userDetails.getUserId());
+        RefreshToken refreshToken = createRefreshToken(userDetails.getUser().getId());
 
-        return new LoginDTO(jwt, refreshToken.getToken(), userDetails.getUserId(),
-                userDetails.getEmail(),roles);
+        return new LoginDto(jwt, refreshToken.getToken(), userDetails.getUser().getId(), refreshToken.getExpiryDate(),
+                userDetails.getUsername(),roles);
     }
 
     @Override
@@ -188,10 +187,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return refreshTokenRepository.findByToken(token);
     }
 
-
-    private Optional<User> checkEmail(String email) {
+    @Override
+    public User checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         user.orElseThrow(() -> new ResourceNotFoundException("User does not exist with email: "+ email));
-        return user;
+        return user.get();
     }
 }

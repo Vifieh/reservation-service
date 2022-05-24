@@ -1,6 +1,5 @@
 package com.reservation.reservationservice.exception;
 
-import com.reservation.reservationservice.dto.ResponseMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +65,7 @@ public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -73,7 +73,7 @@ public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setTitle("VALIDATION_FAILED");
         exceptionResponse.setMessage(ex.getBindingResult().toString());
-        exceptionResponse.setEndpoint(request.toString());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
 }

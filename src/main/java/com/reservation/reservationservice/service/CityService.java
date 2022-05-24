@@ -6,11 +6,13 @@ import java.util.List;
 
 public interface CityService {
 
-    void createCity(City city);
+    void createCity(String countryId, City city);
 
     void editCity(String cityId, City city);
 
     List<City> getAllCities();
+
+    List<City> getCitiesByCountry(String countryId);
 
     City getCity(String cityId);
 

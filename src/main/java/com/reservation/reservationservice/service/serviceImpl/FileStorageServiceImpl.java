@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
@@ -21,25 +22,34 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public void init() {
         try {
-            Files.createDirectory(root);
+            if (!Files.exists(root)) {
+                Files.createDirectory(root);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize folder for upload!");
         }
     }
 
     @Override
-    public void save(MultipartFile file) {
+    public void save(String directoryName, MultipartFile file) {
+        String dirPath = root + "/" + directoryName;
+        Path path = Paths.get(dirPath);
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            Files.copy(file.getInputStream(), path.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
     }
 
     @Override
-    public Resource load(String filename) {
+    public Resource load(String directoryName, String filename) {
+        String dirPath = root + "/" + directoryName;
+        Path path = Paths.get(dirPath);
         try {
-            Path file = root.resolve(filename);
+            Path file = path.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
@@ -58,9 +68,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public Stream<Path> loadAll() {
+    public Stream<Path> loadAll(String directoryName) {
+        String dirPath = root + "/" + directoryName;
+        Path pathDir = Paths.get(dirPath);
         try {
-            return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
+            return Files.walk(pathDir, 1).filter(path -> !path.equals(pathDir)).map(pathDir::relativize);
         } catch (IOException e) {
             throw new RuntimeException("Could not load the files!");
         }

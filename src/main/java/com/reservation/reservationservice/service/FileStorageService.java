@@ -10,12 +10,12 @@ public interface FileStorageService {
 
     void init();
 
-    void save(MultipartFile file);
+    void save(String directoryName, MultipartFile file);
 
-    Resource load(String filename);
+    Resource load(String directoryName, String filename);
 
     void deleteAll();
 
-    Stream<Path> loadAll();
+    Stream<Path> loadAll(String directoryName);
 
 }

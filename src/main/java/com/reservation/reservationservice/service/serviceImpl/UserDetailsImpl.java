@@ -1,39 +1,27 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.reservation.reservationservice.model.Role;
 import com.reservation.reservationservice.model.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private String userId;
-
-    private String email;
-
-    private Boolean locked = false;
-
-    @JsonIgnore
-    private String password;
+    private User user;
 
     private Collection<? extends GrantedAuthority> authorities;
 
 
-    public UserDetailsImpl(String userId, String email, String password,
-                           Collection<? extends GrantedAuthority> authorities) {
-        super();
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
+    public UserDetailsImpl(User user, Collection<? extends GrantedAuthority> authorities) {
+        this.user = user;
         this.authorities = authorities;
     }
 
@@ -42,16 +30,17 @@ public class UserDetailsImpl implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
                 .collect(Collectors.toList());
 
-        return new UserDetailsImpl(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
-                authorities);
+        return new UserDetailsImpl(user, authorities);
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return user.getEmail();
     }
 
     @Override
@@ -61,7 +50,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !locked;
+        return true;
     }
 
     @Override
@@ -71,16 +60,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getEnabled();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(userId, user.userId);
-    }
 }

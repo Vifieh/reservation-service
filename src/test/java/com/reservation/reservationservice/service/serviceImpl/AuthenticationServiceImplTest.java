@@ -8,8 +8,12 @@ import static org.mockito.Mockito.when;
 import com.reservation.reservationservice.exception.BadRequestException;
 import com.reservation.reservationservice.payload.RegisterPayload;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceImplTest {
+
     @Test
     public void testRegister() {
         AuthenticationServiceImpl authenticationServiceImpl = new AuthenticationServiceImpl();
