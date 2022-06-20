@@ -18,8 +18,8 @@ spring:
     show-sql: 'true'
   servlet:
     multipart:
-      max-file-size: '5000KB'
-      max-request-size: '5000KB'
+#      max-file-size: '5000KB'
+#      max-request-size: '5000KB'
       enabled: true
   security:
     user:

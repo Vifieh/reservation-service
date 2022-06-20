@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -19,7 +21,7 @@ class RoleRepositoryTest {
     @BeforeEach
     void setUp() {
         Role role = new Role();
-        role.setId(1L);
+        role.setId("1L");
         role.setRole(ERole.ROLE_USER);
         roleRepository.save(role);
     }
@@ -34,9 +36,9 @@ class RoleRepositoryTest {
         //given
         ERole eRole = ERole.ROLE_USER;
         //when
-        Role role = roleRepository.findByRole(eRole);
+        Optional<Role> role = roleRepository.findByRole(eRole);
         //then
-        assertThat(role.getRole()).isEqualTo(eRole);
+        assertThat(role.get().getRole()).isEqualTo(eRole);
     }
 
     @Test

@@ -84,7 +84,7 @@ public class AuthenticationIntegrationTest {
 
         eRole =  ERole.ROLE_USER;
         role = new Role();
-        role.setId(1L);
+        role.setId("1L");
         role.setRole(eRole);
         mockRoleRepository.save(role);
     }

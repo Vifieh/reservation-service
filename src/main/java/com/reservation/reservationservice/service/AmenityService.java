@@ -11,9 +11,9 @@ public interface AmenityService {
 
     void editAmenity(String amenityId, Amenity amenity);
 
-    List<Amenity> getAllAmenities();
+    List<Amenity> getAllAmenities(boolean mostRequested);
 
-    List<Amenity> getAmenitiesByCategory(String categoryId);
+    List<Amenity> getAmenitiesByCategory(String categoryId, boolean mostRequested);
 
     Amenity getAmenity(String amenityId);
 

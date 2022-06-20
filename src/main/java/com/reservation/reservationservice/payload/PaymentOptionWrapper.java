@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenRefreshPayload {
+public class PaymentOptionWrapper {
 
-    @NotBlank
-    private String refreshToken;
+    List<CustomPayload> paymentOptionsPayload;
 
 }

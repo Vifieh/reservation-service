@@ -5,8 +5,10 @@ import com.reservation.reservationservice.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+import java.util.Optional;
 
-    Role findByRole(ERole role);
+@Repository
+public interface RoleRepository extends JpaRepository<Role, String> {
+
+    Optional<Role> findByRole(ERole role);
 }

@@ -1,11 +1,15 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.dto.PropertyContactDetailsDto;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.*;
+import com.reservation.reservationservice.payload.PropertyAddressPayload;
+import com.reservation.reservationservice.payload.PropertyContactDetailsPayload;
 import com.reservation.reservationservice.repository.PropertyAddressRepository;
 import com.reservation.reservationservice.repository.PropertyContactDetailsRepository;
 import com.reservation.reservationservice.repository.PropertyRepository;
 import com.reservation.reservationservice.repository.UserContactDetailsRepository;
+import com.reservation.reservationservice.service.CityService;
 import com.reservation.reservationservice.service.ContactDetailsService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
@@ -30,6 +34,9 @@ public class ContactDetailsServiceImpl implements ContactDetailsService {
 
     @Autowired
     PropertyAddressRepository propertyAddressRepository;
+
+    @Autowired
+    CityService cityService;
 
 
     @Override
@@ -61,20 +68,29 @@ public class ContactDetailsServiceImpl implements ContactDetailsService {
     }
 
     @Override
-    public PropertyContactDetails addPropertyContactDetails(Property property, PropertyContactDetails propertyContactDetails) {
+    public PropertyContactDetails addPropertyContactDetails(Property property, PropertyContactDetailsPayload contactDetailsPayload) {
         User user = userService.getAuthUser();
+        PropertyContactDetails propertyContactDetails = new PropertyContactDetails();
         propertyContactDetails.setId(util.generateId());
         propertyContactDetails.setCreatedBy(user.getEmail());
-        propertyContactDetails.setProperty(property);
+        propertyContactDetails.setName(contactDetailsPayload.getName());
+        propertyContactDetails.setPhoneNumber(contactDetailsPayload.getPhoneNumber());
+        propertyContactDetails.setAlternativeNumber(contactDetailsPayload.getAlternativeNumber());
+        propertyContactDetails.setCompanyName(contactDetailsPayload.getCompanyName());
        return propertyContactDetailsRepository.save(propertyContactDetails);
     }
 
     @Override
-    public PropertyAddress addPropertyAddress(Property property, PropertyAddress propertyAddress) {
+    public PropertyAddress addPropertyAddress(Property property, PropertyAddressPayload addressPayload) {
         User user = userService.getAuthUser();
+        City city = cityService.getCity(addressPayload.getCityPayload().getId());
+        PropertyAddress propertyAddress = new PropertyAddress();
         propertyAddress.setId(util.generateId());
-        propertyAddress.setProperty(property);
         propertyAddress.setCreatedBy(user.getEmail());
+        propertyAddress.setStreetAddress(addressPayload.getStreetAddress());
+        propertyAddress.setAddressLine2(addressPayload.getAddressLine2());
+        propertyAddress.setCode(addressPayload.getCode());
+        propertyAddress.setCity(city);
       return  propertyAddressRepository.save(propertyAddress);
     }
 }

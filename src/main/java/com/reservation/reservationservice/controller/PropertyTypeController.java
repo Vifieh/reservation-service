@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/protected")
 @CrossOrigin
 @RestController
 public class PropertyTypeController {
@@ -50,7 +50,8 @@ public class PropertyTypeController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("public/propertyTypes")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("propertyTypes")
     public ResponseEntity<List<PropertyTypeDto>> getPropertyTypes() {
         List<PropertyType> propertyTypes = propertyTypeService.getAllPropertyTypes();
         List<PropertyTypeDto> propertyTypeDtos = propertyTypes.stream().map(propertyType ->
@@ -59,7 +60,8 @@ public class PropertyTypeController {
         return new ResponseEntity<>(propertyTypeDtos, HttpStatus.OK);
     }
 
-    @GetMapping("public/propertyTypes/{propertyTypeId}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("propertyTypes/{propertyTypeId}")
     public ResponseEntity<PropertyTypeDto> getPropertyType(@PathVariable("propertyTypeId") String propertyTypeId) {
         PropertyType propertyType = propertyTypeService.getPropertyType(propertyTypeId);
         PropertyTypeDto propertyTypeDto = this.modelMapper.map(propertyType, PropertyTypeDto.class);

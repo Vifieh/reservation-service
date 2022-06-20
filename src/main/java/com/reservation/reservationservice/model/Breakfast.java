@@ -1,6 +1,7 @@
 package com.reservation.reservationservice.model;
 
 import com.reservation.reservationservice.constants.Available;
+import com.reservation.reservationservice.constants.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,9 @@ public class Breakfast extends BaseEntity{
     @Id
     private String id;
     private double unitPrice;
+
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     @Enumerated(EnumType.STRING)
     private Available available;

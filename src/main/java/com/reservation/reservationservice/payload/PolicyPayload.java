@@ -21,6 +21,6 @@ public class PolicyPayload {
     private String checkInTo;
     private String checkOutFrom;
     private String checkOutTo;
-    private Default CanAccommodateChildren;
+    private Default canAccommodateChildren;
     private PetPayload petPayload;
 }

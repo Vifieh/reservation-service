@@ -4,6 +4,8 @@ import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.model.PropertyAddress;
 import com.reservation.reservationservice.model.PropertyContactDetails;
 import com.reservation.reservationservice.model.UserContactDetails;
+import com.reservation.reservationservice.payload.PropertyAddressPayload;
+import com.reservation.reservationservice.payload.PropertyContactDetailsPayload;
 
 public interface ContactDetailsService {
 
@@ -13,7 +15,7 @@ public interface ContactDetailsService {
 
     UserContactDetails getContactDetails(String contactId);
 
-    PropertyContactDetails addPropertyContactDetails(Property property, PropertyContactDetails propertyContactDetails);
+    PropertyContactDetails addPropertyContactDetails(Property property, PropertyContactDetailsPayload contactDetailsPayload);
 
-    PropertyAddress addPropertyAddress(Property property, PropertyAddress propertyAddress);
+    PropertyAddress addPropertyAddress(Property property, PropertyAddressPayload addressPayload);
 }

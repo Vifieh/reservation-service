@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+/**
+ * @author Vifieh Ruth
+ * on 6/4/22
+ */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TokenRefreshPayload {
+public class AmenityPayload {
 
-    @NotBlank
-    private String refreshToken;
-
+    private String name;
+    private boolean mostRequested = false;
 }

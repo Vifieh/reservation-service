@@ -41,7 +41,8 @@ public class FacilityServiceImpl implements FacilityService {
     @Override
     public void editFacility(String facilityId, Facility facility) {
         Facility facility1 = getFacility(facilityId);
-        facility.setName(facility.getName());
+        facility1.setName(facility.getName());
+        facility1.setChoice(facility.isChoice());
         facilityRepository.save(facility1);
     }
 

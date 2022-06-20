@@ -1,9 +1,6 @@
 package com.reservation.reservationservice.model;
 
-import com.reservation.reservationservice.constants.Available;
-import com.reservation.reservationservice.constants.Reservation;
-import com.reservation.reservationservice.constants.Site;
-import com.reservation.reservationservice.constants.Type;
+import com.reservation.reservationservice.constants.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +27,9 @@ public class Parking extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private Reservation reservation;
+
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     private double unitPrice;
 

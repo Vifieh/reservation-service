@@ -1,8 +1,10 @@
 package com.reservation.reservationservice.controller;
 
+import com.reservation.reservationservice.dto.AmenityDto;
 import com.reservation.reservationservice.dto.CustomDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.model.Amenity;
+import com.reservation.reservationservice.payload.AmenityPayload;
 import com.reservation.reservationservice.payload.CustomPayload;
 import com.reservation.reservationservice.service.AmenityService;
 import org.modelmapper.ModelMapper;
@@ -33,7 +35,7 @@ public class AmenityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("amenities/categoryAmenities/{categoryId}")
     public ResponseEntity<ResponseMessage> createAmenity(@PathVariable("categoryId") String categoryId,
-                                                             @RequestBody @Valid CustomPayload amenityPayload) {
+                                                             @RequestBody @Valid AmenityPayload amenityPayload) {
         Amenity amenity = convertAmenityToAmenityPayload(amenityPayload);
         amenityService.createAmenity(categoryId, amenity);
         message = "Amenity created successfully!";
@@ -43,7 +45,7 @@ public class AmenityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("amenities/{amenityId}")
     public ResponseEntity<ResponseMessage> editAmenity(@PathVariable("amenityId") String amenityId,
-                                                               @RequestBody @Valid CustomPayload amenityPayload) {
+                                                               @RequestBody @Valid AmenityPayload amenityPayload) {
         Amenity amenity = convertAmenityToAmenityPayload(amenityPayload);
         amenityService.editAmenity(amenityId, amenity);
         message = "Amenity edited successfully!";
@@ -52,26 +54,27 @@ public class AmenityController {
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("amenities")
-    public ResponseEntity<List<CustomDto>> getAmenities() {
-        List<Amenity> amenities = amenityService.getAllAmenities();
-        List<CustomDto> amenityDtos = convertCitiesToCityDtos(amenities);
+    public ResponseEntity<List<AmenityDto>> getAmenities(@RequestParam boolean mostRequested) {
+        List<Amenity> amenities = amenityService.getAllAmenities(mostRequested);
+        List<AmenityDto> amenityDtos = convertCitiesToCityDtos(amenities);
         return new ResponseEntity<>(amenityDtos, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
-    @GetMapping("amenities/categoryAmenities/{categoryId}")
-    public ResponseEntity<List<CustomDto>> getAmenitiesByCategory(@PathVariable("categoryId")String categoryId) {
-        List<Amenity> amenities = amenityService.getAmenitiesByCategory(categoryId);
-        List<CustomDto> amenityDtos = convertCitiesToCityDtos(amenities);
+    @GetMapping("amenities/categoryAmenities")
+    public ResponseEntity<List<AmenityDto>> getAmenitiesByCategory(@RequestParam String categoryId,
+                                                                   @RequestParam boolean mostRequested) {
+        List<Amenity> amenities = amenityService.getAmenitiesByCategory(categoryId, mostRequested);
+        List<AmenityDto> amenityDtos = convertCitiesToCityDtos(amenities);
         return new ResponseEntity<>(amenityDtos, HttpStatus.OK);
 
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("amenities/{amenityId}")
-    public ResponseEntity<CustomDto> getAmenity(@PathVariable("amenityId") String amenityId) {
+    public ResponseEntity<AmenityDto> getAmenity(@PathVariable("amenityId") String amenityId) {
         Amenity amenity = amenityService.getAmenity(amenityId);
-        CustomDto amenityDto = this.modelMapper.map(amenity, CustomDto.class);
+        AmenityDto amenityDto = this.modelMapper.map(amenity, AmenityDto.class);
         return new ResponseEntity<>(amenityDto, HttpStatus.OK);
     }
 
@@ -83,13 +86,13 @@ public class AmenityController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
     }
 
-    private Amenity convertAmenityToAmenityPayload(CustomPayload amenityPayload) {
+    private Amenity convertAmenityToAmenityPayload(AmenityPayload amenityPayload) {
         return this.modelMapper.map(amenityPayload, Amenity.class);
     }
 
-    private List<CustomDto> convertCitiesToCityDtos(List<Amenity> amenities) {
+    private List<AmenityDto> convertCitiesToCityDtos(List<Amenity> amenities) {
         return amenities.stream()
-                .map(amenity -> this.modelMapper.map(amenity, CustomDto.class))
+                .map(amenity -> this.modelMapper.map(amenity, AmenityDto.class))
                 .collect(Collectors.toList());
     }
 }

@@ -4,10 +4,10 @@ import com.reservation.reservationservice.constants.ERole;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Role;
 import com.reservation.reservationservice.model.User;
-import com.reservation.reservationservice.repository.RoleRepository;
 import com.reservation.reservationservice.repository.UserRepository;
 import com.reservation.reservationservice.service.AuthenticationService;
 import com.reservation.reservationservice.service.ContactDetailsService;
+import com.reservation.reservationservice.service.RoleService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,13 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private Util util = new Util();
+    private final Util util = new Util();
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    RoleService roleService;
 
     @Autowired
     ContactDetailsService contactDetailsService;
@@ -57,10 +57,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsersByRoleUser() {
-        Role role = roleRepository.findByRole(ERole.ROLE_USER);
+        Role role = roleService.getRoleByName(ERole.ROLE_USER);
         return role.getUser();
     }
-
 
     @Override
     public User getUser(String userId) {

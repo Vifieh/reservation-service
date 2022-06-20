@@ -10,11 +10,11 @@ import com.reservation.reservationservice.exception.TokenRefreshException;
 import com.reservation.reservationservice.model.*;
 import com.reservation.reservationservice.payload.RegisterPayload;
 import com.reservation.reservationservice.repository.RefreshTokenRepository;
-import com.reservation.reservationservice.repository.RoleRepository;
 import com.reservation.reservationservice.repository.UserRepository;
 import com.reservation.reservationservice.service.AuthenticationService;
 import com.reservation.reservationservice.service.ConfirmationTokenService;
 import com.reservation.reservationservice.service.EmailService;
+import com.reservation.reservationservice.service.RoleService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    RoleService roleService;
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
@@ -80,10 +80,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(registerPayload.getPassword()));
         user.setCreatedBy(registerPayload.getEmail());
         if (registerPayload.getRole().equals("USER")) {
-            roleList.add(roleRepository.findByRole(ERole.ROLE_USER));
+            roleList.add(roleService.getRoleByName(ERole.ROLE_USER));
         }
         if (user1.isPresent() || registerPayload.getRole().equals("MANAGER")) {
-            roleList.add(roleRepository.findByRole(ERole.ROLE_MANAGER));
+            roleList.add(roleService.getRoleByName(ERole.ROLE_MANAGER));
         }
         user.setRole(roleList);
         ConfirmationToken confirmationToken = new ConfirmationToken(
@@ -135,7 +135,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
@@ -144,7 +143,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return token;
     }
-
 
     @Override
     public LoginDto login(User user) {
@@ -189,8 +187,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User checkEmail(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        user.orElseThrow(() -> new ResourceNotFoundException("User does not exist with email: "+ email));
-        return user.get();
+        User user = userRepository.findByEmail(email).
+                orElseThrow(() -> new ResourceNotFoundException("User does not exist with email: "+ email));
+        return user;
     }
 }

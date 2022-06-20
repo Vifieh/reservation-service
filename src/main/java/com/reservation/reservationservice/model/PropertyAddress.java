@@ -1,6 +1,5 @@
 package com.reservation.reservationservice.model;
 
-import com.reservation.reservationservice.dto.CustomDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +17,10 @@ public class PropertyAddress extends BaseEntity{
     private String code;
 
     @OneToOne(mappedBy = "propertyAddress")
-    @JoinColumn(name = "property_id")
     Property property;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
+
 }

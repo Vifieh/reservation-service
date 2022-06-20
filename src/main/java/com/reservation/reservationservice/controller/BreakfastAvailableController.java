@@ -47,8 +47,8 @@ public class BreakfastAvailableController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
-    @GetMapping("breakfastAvailable")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("breakfastsAvailable")
     public ResponseEntity<List<CustomDto>> getAllBreakfastAvailable() {
         List<BreakfastAvailable> breakfastAvailableList = breakfastAvailableService.getAllBreakfastAvailable();
         List<CustomDto> breakfastAvailableDtos = breakfastAvailableList.stream().map(breakfastAvailable ->
@@ -56,7 +56,7 @@ public class BreakfastAvailableController {
         return new ResponseEntity<>(breakfastAvailableDtos, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("breakfastAvailable/{breakfastAvailableId}")
     public ResponseEntity<CustomDto> getBreakfastAvailable(@PathVariable String breakfastAvailableId) {
         BreakfastAvailable breakfastAvailable = breakfastAvailableService.getBreakfastAvailable(breakfastAvailableId);
