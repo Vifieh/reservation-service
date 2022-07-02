@@ -1,8 +1,10 @@
 package com.reservation.reservationservice.controller;
 
+import com.reservation.reservationservice.dto.BedAvailableDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.dto.RoomBedAvailableDto;
 import com.reservation.reservationservice.dto.RoomDto;
+import com.reservation.reservationservice.model.BedAvailable;
 import com.reservation.reservationservice.model.Room;
 import com.reservation.reservationservice.payload.ExtraBedOptionsAndRoomAmenitiesPayload;
 import com.reservation.reservationservice.payload.ExtraBedPayload;
@@ -58,17 +60,33 @@ public class RoomController {
         message = "Amenities added successfully";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
     }
-
-    @GetMapping("public/rooms")
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("protected/rooms")
     public ResponseEntity<List<RoomDto>> getAllRoomsOfUserByProperty(@RequestParam("propertyId") String propertyId) {
         List<Room> rooms = roomService.getAllRoomsOfUserByProperty(propertyId);
-        List<RoomDto> roomDtoList = rooms.stream().map(room -> {
+        List<RoomDto> roomDtoList = getRoomDto(rooms);
+        return new ResponseEntity<>(roomDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("public/rooms")
+    public ResponseEntity<List<RoomDto>> getAllRoomsByProperty(@RequestParam("propertyId") String propertyId) {
+        List<Room> rooms = roomService.getAllRoomsByProperty(propertyId);
+        List<RoomDto> roomDtoList = getRoomDto(rooms);
+        return new ResponseEntity<>(roomDtoList, HttpStatus.OK);
+    }
+
+    private List<RoomDto> getRoomDto(List<Room> rooms) {
+        return rooms.stream().map(room -> {
             List<RoomBedAvailableDto> roomBedAvailableDtoList = room.getRoomBedAvailables()
-                    .stream().map(roomBedAvailable -> modelMapper.map(roomBedAvailable, RoomBedAvailableDto.class)).collect(Collectors.toList());
+                    .stream().map(roomBedAvailable -> {
+                        BedAvailableDto bedAvailableDto = modelMapper.map(roomBedAvailable.getBedAvailable(), BedAvailableDto.class);
+                      return new RoomBedAvailableDto(roomBedAvailable.getId(), bedAvailableDto, roomBedAvailable.getNumberOfBeds());
+                    }).collect(Collectors.toList());
             return new RoomDto(room.getId(), room.getName(), room.getNumberOfRooms(), room.getRoomSize(),
                     room.getUnitPrice(), room.getNumberOfGuests(), room.getRoomName().getName(), room.getSize(), room.getSmokingPolicy(),
                     room.getCurrency(), roomBedAvailableDtoList);
         }).collect(Collectors.toList());
-        return new ResponseEntity<>(roomDtoList, HttpStatus.OK);
     }
+
+
 }

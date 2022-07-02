@@ -1,6 +1,7 @@
 package com.reservation.reservationservice.service;
 
 import com.reservation.reservationservice.model.City;
+import com.reservation.reservationservice.model.PropertyAddress;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public interface CityService {
     List<City> getAllCities();
 
     List<City> getCitiesByCountry(String countryId);
+
+    List<PropertyAddress> getPropertyAddressByCity(String cityId);
 
     City getCity(String cityId);
 

@@ -47,12 +47,19 @@ public class PaymentOptionController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("paymentOptions")
     public ResponseEntity<List<CustomDto>> getPaymentOptions() {
         List<PaymentOption> paymentOptions = paymentOptionService.getAllPaymentOptions();
-        List<CustomDto> paymentOptionsDtos = paymentOptions.stream().map(paymentOption ->
-                modelMapper.map(paymentOption, CustomDto.class)).collect(Collectors.toList());
+        List<CustomDto> paymentOptionsDtos = getPaymentOptionsDtoList(paymentOptions);
+        return new ResponseEntity<>(paymentOptionsDtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("paymentOptions/properties/{propertyId}")
+    public ResponseEntity<List<CustomDto>> getPaymentOptionsOfAProperty(@PathVariable String propertyId) {
+        List<PaymentOption> paymentOptions = paymentOptionService.getAllPaymentOptionsByProperty(propertyId);
+        List<CustomDto> paymentOptionsDtos = getPaymentOptionsDtoList(paymentOptions);
         return new ResponseEntity<>(paymentOptionsDtos, HttpStatus.OK);
     }
 
@@ -70,5 +77,10 @@ public class PaymentOptionController {
         paymentOptionService.deletePaymentOption(paymentOptionId);
         message = "PaymentOption deleted successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
+
+    private List<CustomDto> getPaymentOptionsDtoList(List<PaymentOption> paymentOptions) {
+        return paymentOptions.stream().map(paymentOption ->
+                modelMapper.map(paymentOption, CustomDto.class)).collect(Collectors.toList());
     }
 }

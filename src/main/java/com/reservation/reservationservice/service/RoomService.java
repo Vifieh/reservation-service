@@ -15,4 +15,6 @@ public interface RoomService {
     Room getRoom(String roomId);
 
     List<Room> getAllRoomsOfUserByProperty(String propertyId);
+
+    List<Room> getAllRoomsByProperty(String propertyId);
 }

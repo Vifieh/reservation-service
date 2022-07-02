@@ -3,9 +3,11 @@ package com.reservation.reservationservice.service.serviceImpl;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.PaymentOption;
+import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.PaymentOptionRepository;
 import com.reservation.reservationservice.service.PaymentOptionService;
+import com.reservation.reservationservice.service.PropertyService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class PaymentOptionServiceImpl implements PaymentOptionService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PropertyService propertyService;
 
     @Override
     public void createPaymentOption(PaymentOption paymentOption) {
@@ -52,6 +56,12 @@ public class PaymentOptionServiceImpl implements PaymentOptionService {
     @Override
     public List<PaymentOption> getAllPaymentOptions() {
         return paymentOptionRepository.findAll();
+    }
+
+    @Override
+    public List<PaymentOption> getAllPaymentOptionsByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return property.getPaymentOptions();
     }
 
     @Override

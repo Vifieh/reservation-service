@@ -2,8 +2,10 @@ package com.reservation.reservationservice.controller;
 
 import com.reservation.reservationservice.dto.CustomDto;
 import com.reservation.reservationservice.dto.FacilityDto;
+import com.reservation.reservationservice.dto.PropertyFacilityDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.model.Facility;
+import com.reservation.reservationservice.model.PropertyFacility;
 import com.reservation.reservationservice.payload.CustomPayload;
 import com.reservation.reservationservice.payload.FacilityPayload;
 import com.reservation.reservationservice.service.FacilityService;
@@ -56,6 +58,17 @@ public class FacilityController {
         List<FacilityDto> facilitiesDtos = facilities.stream().map(facility ->
                 modelMapper.map(facility, FacilityDto.class)).collect(Collectors.toList());
         return new ResponseEntity<>(facilitiesDtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("facilities/properties/{propertyId}")
+    public ResponseEntity<List<PropertyFacilityDto>> getFacilitiesByProperty(@PathVariable String propertyId) {
+        List<PropertyFacility> propertyFacilityList = facilityService.getAllFacilitiesByProperty(propertyId);
+        List<PropertyFacilityDto> propertyFacilityDtoList = propertyFacilityList.stream().map(propertyFacility -> {
+                    FacilityDto facilitiesDto = modelMapper.map(propertyFacility.getFacility(), FacilityDto.class);
+                  return new PropertyFacilityDto(facilitiesDto, propertyFacility.getStatus());
+        }).collect(Collectors.toList());
+        return new ResponseEntity<>(propertyFacilityDtoList, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")

@@ -93,7 +93,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 user
         );
         String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
-        emailService.send(user, email,  link);
+        emailService.sendUserRegistration(user, email,  link);
         userRepository.save(user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
     }
@@ -131,7 +131,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
         if(user1.get().getTokens().get(0).getConfirmedAt() == null) {
             confirmationTokenService.saveConfirmationToken(confirmationToken);
-            emailService.send(user1.get(), email1, link);
+            emailService.sendUserRegistration(user1.get(), email1, link);
         }
     }
 

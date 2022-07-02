@@ -2,10 +2,13 @@ package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
+import com.reservation.reservationservice.model.Breakfast;
 import com.reservation.reservationservice.model.BreakfastAvailable;
+import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.BreakfastAvailableRepository;
 import com.reservation.reservationservice.service.BreakfastAvailableService;
+import com.reservation.reservationservice.service.PropertyService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,9 @@ public class BreakfastAvailableServiceImpl implements BreakfastAvailableService 
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    PropertyService propertyService;
 
     @Override
     public void createBreakfastAvailable(BreakfastAvailable breakfastAvailable) {
@@ -50,6 +56,12 @@ public class BreakfastAvailableServiceImpl implements BreakfastAvailableService 
     }
 
     @Override
+    public Breakfast getAllBreakfastByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return property.getBreakfast();
+    }
+
+    @Override
     public BreakfastAvailable getBreakfastAvailable(String breakfastId) {
         Optional<BreakfastAvailable> breakfastAvailable = breakfastAvailableRepository.findById(breakfastId);
         breakfastAvailable.orElseThrow(() -> new ResourceNotFoundException("Breakfast available not found with id -  " + breakfastAvailable));
@@ -58,6 +70,6 @@ public class BreakfastAvailableServiceImpl implements BreakfastAvailableService 
 
     @Override
     public void deleteBreakfastAvailable(String breakfastId) {
-
+        breakfastAvailableRepository.deleteById(breakfastId);
     }
 }

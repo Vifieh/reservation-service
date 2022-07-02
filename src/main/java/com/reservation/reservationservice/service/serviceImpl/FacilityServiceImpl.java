@@ -3,9 +3,12 @@ package com.reservation.reservationservice.service.serviceImpl;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Facility;
+import com.reservation.reservationservice.model.Property;
+import com.reservation.reservationservice.model.PropertyFacility;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.FacilityRepository;
 import com.reservation.reservationservice.service.FacilityService;
+import com.reservation.reservationservice.service.PropertyService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ public class FacilityServiceImpl implements FacilityService {
 
     @Autowired
     FacilityRepository facilityRepository;
+
+    @Autowired
+    PropertyService propertyService;
 
     @Autowired
     UserService userService;
@@ -49,6 +55,12 @@ public class FacilityServiceImpl implements FacilityService {
     @Override
     public List<Facility> getAllFacilities() {
         return facilityRepository.findAll();
+    }
+
+    @Override
+    public List<PropertyFacility> getAllFacilitiesByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return property.getPropertyFacilities();
     }
 
     @Override

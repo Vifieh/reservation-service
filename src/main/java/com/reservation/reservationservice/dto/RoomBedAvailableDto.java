@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.dto;
 
+import com.reservation.reservationservice.model.RoomBedAvailableKey;
 import lombok.*;
 
 /**
@@ -12,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 public class RoomBedAvailableDto {
 
-    private String id;
-    private String bedAvailableId;
+    private RoomBedAvailableKey id;
+    private BedAvailableDto bedAvailableDto;
     private int numberOfBeds;
 }

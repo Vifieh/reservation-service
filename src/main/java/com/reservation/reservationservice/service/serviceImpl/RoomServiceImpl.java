@@ -92,6 +92,11 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findByUserAndProperty(user, property);
     }
 
+    @Override
+    public List<Room> getAllRoomsByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return roomRepository.findByProperty(property);
+    }
 
     private void addRoomBedAvailable(RoomPayload roomPayload, Room room1) {
         for (RoomBedAvailablePayload roomBedAvailablePayload : roomPayload.getRoomBedAvailablePayloadList()) {

@@ -38,6 +38,9 @@ public class Room extends BaseEntity{
     @OneToMany(mappedBy = "room")
     List<RoomBedAvailable> roomBedAvailables;
 
+    @OneToMany(mappedBy = "room")
+    List<RoomReservationItem> roomReservationItemList;
+
     @ManyToOne
     @JoinColumn(name = "property_id")
     private Property property;

@@ -71,6 +71,12 @@ public class PropertyServiceImpl implements PropertyService {
     PaymentOptionService paymentOptionService;
 
     @Autowired
+    EmailService emailService;
+
+    @Autowired
+    CityService cityService;
+
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
@@ -133,21 +139,11 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public void addPaymentOptions(String propertyId, List<CustomPayload> paymentOptionsPayload) {
         Property property = getProperty(propertyId);
-        for (CustomPayload paymentOption: paymentOptionsPayload) {
+        for (CustomPayload paymentOption : paymentOptionsPayload) {
             PaymentOption paymentOption1 = paymentOptionService.getPaymentOptionByName(paymentOption.getName());
             property.getPaymentOptions().add(paymentOption1);
             propertyRepository.saveAndFlush(property);
         }
-    }
-
-    @Override
-    public void approveProperty(String propertyId) {
-        Property property = getProperty(propertyId);
-        if (property.isPending()) {
-            throw new ResourceAlreadyExistException("Property is already approved");
-        }
-        property.setPending(true);
-        propertyRepository.save(property);
     }
 
     @Override
@@ -158,14 +154,51 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public List<Property> getAllProperties(boolean pending) {
-        return propertyRepository.findByPending(pending);
+    public List<Property> getAllProperties(boolean pending, boolean completedRegistration) {
+        return propertyRepository.findByPendingAndCompletedRegistrationOrderByRatingDesc(pending, completedRegistration);
     }
 
     @Override
     public List<Property> getAllPropertiesOfUSer() {
         User user = userService.getAuthUser();
         return user.getProperties();
+    }
+
+    @Override
+    public void approveProperty(String propertyId) {
+        Property property = getProperty(propertyId);
+        Email approvedEmail = new Email();
+        if (!property.isPending()) {
+            throw new ResourceAlreadyExistException("Property is already approved");
+        }
+        property.setPending(false);
+        emailService.approvedPropertyEmail(property.getUser(), approvedEmail, property);
+        propertyRepository.save(property);
+    }
+
+    @Override
+    public void completeRegistration(String propertyId) {
+        User user = userService.getAuthUser();
+        Email completedEmail = new Email();
+        Property property = getProperty(propertyId);
+        if (property.isCompletedRegistration()) {
+            throw new ResourceAlreadyExistException("Property is already registered");
+        }
+        property.setCompletedRegistration(true);
+        emailService.sendCompletedRegistration(user, completedEmail, property);
+        propertyRepository.save(property);
+    }
+
+    @Override
+    public Parking getParkingByProperty(String propertyId) {
+        Property property = getProperty(propertyId);
+        return property.getParking();
+    }
+
+    @Override
+    public Policy getPolicyByProperty(String propertyId) {
+        Property property = getProperty(propertyId);
+        return property.getPolicy();
     }
 
     private void addParkingFacility(Property property, Parking parking) {
@@ -178,7 +211,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     private void addLanguage(Property property, List<Language> languages) {
-        for (Language language: languages) {
+        for (Language language : languages) {
             Language language1 = languageService.getLanguageByName(language.getName());
             property.getLanguages().add(language1);
             propertyRepository.saveAndFlush(property);
@@ -214,7 +247,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     private List<BreakfastAvailable> addBreakfastAvailable(BreakfastPayload breakfastPayload) {
         List<BreakfastAvailable> breakfastAvailableList = new ArrayList<>();
-        for (DefaultPayload breakfastAvailablePayload: breakfastPayload.getBreakfastAvailablePayload()) {
+        for (DefaultPayload breakfastAvailablePayload : breakfastPayload.getBreakfastAvailablePayload()) {
             BreakfastAvailable breakfastAvailable1 =
                     breakfastAvailableService.getBreakfastAvailable(breakfastAvailablePayload.getId());
             breakfastAvailableList.add(breakfastAvailable1);

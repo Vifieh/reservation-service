@@ -54,7 +54,7 @@ public class BedAvailableServiceImpl implements BedAvailableService {
     @Override
     public BedAvailable getBedAvailable(String bedId) {
         Optional<BedAvailable> bedAvailable = bedAvailableRepository.findById(bedId);
-//        bedAvailable.orElseThrow(() -> new ResourceNotFoundException("Bed available not found with id -  " + bedId));
+        //        bedAvailable.orElseThrow(() -> new ResourceNotFoundException("Bed available not found with id -  " + bedId));
         return bedAvailable.get();
     }
 

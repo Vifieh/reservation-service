@@ -12,6 +12,8 @@ public interface LanguageService {
 
     List<Language> getAllLanguages();
 
+    List<Language> getLanguagesByProperty(String propertyId);
+
     Language getLanguage(String languageId);
 
     Language getLanguageByName(String name);

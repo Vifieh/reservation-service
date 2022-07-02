@@ -1,5 +1,7 @@
 package com.reservation.reservationservice.service;
 
+import com.reservation.reservationservice.model.Parking;
+import com.reservation.reservationservice.model.Policy;
 import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.payload.*;
 
@@ -11,7 +13,7 @@ public interface PropertyService {
 
     Property getProperty(String propertyId);
 
-    List<Property> getAllProperties(boolean pending);
+    List<Property> getAllProperties(boolean pending, boolean completedRegistration);
 
     List<Property> getAllPropertiesOfUSer();
 
@@ -22,4 +24,10 @@ public interface PropertyService {
     void addPaymentOptions(String propertyId, List<CustomPayload> paymentOptionsPayload);
 
     void approveProperty(String propertyId);
+
+    void completeRegistration(String propertyId);
+
+    Parking getParkingByProperty(String propertyId);
+
+    Policy getPolicyByProperty(String propertyId);
 }

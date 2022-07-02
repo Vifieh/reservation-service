@@ -17,6 +17,8 @@ public interface PaymentOptionService {
 
     List<PaymentOption> getAllPaymentOptions();
 
+    List<PaymentOption> getAllPaymentOptionsByProperty(String propertyId);
+
     PaymentOption getPaymentOption(String paymentOptionId);
 
     PaymentOption getPaymentOptionByName(String name);
