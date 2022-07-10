@@ -75,6 +75,30 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendCompletedRegistrationToAdmin(User user, Email email, Property property, String adminEmail) {
+        try {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        Context context = new Context();
+        context.setVariable("name", user.getEmail().substring(0, user.getEmail().indexOf("@")));
+        context.setVariable("email", user.getEmail());
+        context.setVariable("propertyName", property.getName());
+        context.setVariable("propertyId", property.getId());
+        helper.setFrom(email.getFrom());
+        helper.setTo(adminEmail);
+        helper.setSubject(email.getSubjectCompletedRegistrationToAdmin());
+        String html = templateEngine.process(email.getCompletedRegistrationToAdminTemplate(), context);
+        helper.setText(html, true);
+
+        log.info("Sending email: {} with html body: {}", email, html);
+        mailSender.send(message);
+        } catch (MessagingException e) {
+            LOGGER.error("failed to send email", e);
+            throw new BadRequestException("failed to send email");
+        }
+    }
+
+    @Override
     public void approvedPropertyEmail(User user, Email email, Property property) {
         try {
         MimeMessage message = mailSender.createMimeMessage();
@@ -104,7 +128,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
             Context context = new Context();
             context.setVariable("propertyName", room.getProperty().getName());
-            context.setVariable("roomName", room.getRoomName());
+            context.setVariable("roomName", room.getRoomName().getName());
             context.setVariable("numberOfAdults", reservationPayload.getNumberOfAdults());
             context.setVariable("numberOfChildren", reservationPayload.getNumberOfChildren());
             context.setVariable("totalPrice", reservationPayload.getTotalPrice());
@@ -114,6 +138,34 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(contactDetails.getEmail());
             helper.setSubject(email.getSubjectBookingCompleted());
             String html = templateEngine.process(email.getBookingCompletedTemplate(), context);
+            helper.setText(html, true);
+
+            log.info("Sending email: {} with html body: {}", email, html);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            LOGGER.error("failed to send email", e);
+            throw new BadRequestException("failed to send email");
+        }
+    }
+
+    @Override
+    public void sendReservationCompletedEmailToManager(ReservationContactDetails contactDetails, RoomReservationPayload reservationPayload,
+                                              Email email, Room room, String propertyEmail) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+            Context context = new Context();
+            context.setVariable("propertyName", room.getProperty().getName());
+            context.setVariable("roomName", room.getRoomName().getName());
+            context.setVariable("numberOfAdults", reservationPayload.getNumberOfAdults());
+            context.setVariable("numberOfChildren", reservationPayload.getNumberOfChildren());
+            context.setVariable("totalPrice", reservationPayload.getTotalPrice());
+            context.setVariable("name", contactDetails.getFirstName());
+            context.setVariable("email", contactDetails.getEmail());
+            helper.setFrom(email.getFrom());
+            helper.setTo(propertyEmail);
+            helper.setSubject(email.getSubjectBookingCompletedToManager());
+            String html = templateEngine.process(email.getBookingCompletedToManagerTemplate(), context);
             helper.setText(html, true);
 
             log.info("Sending email: {} with html body: {}", email, html);

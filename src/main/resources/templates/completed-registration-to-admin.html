@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Property Registration completed</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <style type="text/css">
+        body {
+            font-family: calibri, 'DejaVu Sans', Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<h1>Property registration</h1>
+<p>Hello,</p>
+<div>
+    <p>A property <span th:text="${propertyName}"></span> has been successfully registered.</p>
+    <br/><br/>
+    <p>Property ID : <span th:text="${propertyId}"></span><br/></p>
+    <p>Manager name : <span th:text="${name}"></span><br/></p>
+    <p>Manager email : <span th:text="${email}"></span><br/></p>
+    <br/>
+</div>
+<p style="text-align: left;">
+    <span>Check the property details on your dashboard before approving the property </span>
+</p>
+<br>
+
+<p>
+    Regards, <br/>
+    &emsp; <em>The Reservations Team</em>
+</p>
+</body>
+</html>

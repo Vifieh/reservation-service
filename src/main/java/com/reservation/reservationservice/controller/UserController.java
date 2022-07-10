@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.controller;
 
+import com.reservation.reservationservice.constants.ERole;
 import com.reservation.reservationservice.dto.ContactDetailsDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.dto.UserDetailsDto;
@@ -76,8 +77,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("users/role_user")
-    public ResponseEntity<List<UserDetailsDto>> getUsersByRoleUser() {
-        List<User> users = userService.getAllUsersByRoleUser();
+    public ResponseEntity<List<UserDetailsDto>> getUsersByRole(@RequestParam ERole eRole) {
+        List<User> users = userService.getAllUsersByRole(eRole);
         List<UserDetailsDto> userDetailsDtos = convertUsersToUserDetailDtos(users);
         return new ResponseEntity<>(userDetailsDtos, HttpStatus.OK);
     }

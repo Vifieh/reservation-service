@@ -82,10 +82,13 @@ public class CityController {
     @GetMapping("public/cities/{cityId}")
     public ResponseEntity<CityDto> getCity(@PathVariable("cityId") String cityId) {
         City city = cityService.getCity(cityId);
-        List<PropertyAddressDto> propertyAddressDtoList = getPropertyAddressDtoList(city.getPropertyAddresses());
-        List<FileInfo> fileInfos = getFileInfoList(city);
-        CityDto cityDto = new CityDto(city.getId(), city.getName(), propertyAddressDtoList, fileInfos);
-        return new ResponseEntity<>(cityDto, HttpStatus.OK);
+        return getCityDtoResponseEntity(city);
+    }
+
+    @GetMapping("public/cities/cityName/{cityName}")
+    public ResponseEntity<CityDto> getCityByName(@PathVariable("cityName") String cityName) {
+        City city = cityService.getCityByName(cityName);
+        return getCityDtoResponseEntity(city);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -123,5 +126,12 @@ public class CityController {
                     .fromMethodName(FileController.class, "getFile", city.getName(), path.getFileName().toString()).build().toString();
             return new FileInfo(filename, url);
         }).collect(Collectors.toList());
+    }
+
+    private ResponseEntity<CityDto> getCityDtoResponseEntity(City city) {
+        List<PropertyAddressDto> propertyAddressDtoList = getPropertyAddressDtoList(city.getPropertyAddresses());
+        List<FileInfo> fileInfos = getFileInfoList(city);
+        CityDto cityDto = new CityDto(city.getId(), city.getName(), propertyAddressDtoList, fileInfos);
+        return new ResponseEntity<>(cityDto, HttpStatus.OK);
     }
 }

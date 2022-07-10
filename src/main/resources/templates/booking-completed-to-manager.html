@@ -10,12 +10,13 @@
     </style>
 </head>
 <body>
-<h1>Congrats! You're booking is completed </h1>
-<p>Dear <span th:text="${name}"></span>,</p>
+<p>Dear <span th:text="${propertyName}"></span>,</p>
 <div>
-    You have completed your reservation for <span th:text="${propertyName}"></span>
-    Your reservation details are:
+    A reservation has been completed
+    The reservation details are:
     <ul>
+        <li>Guest Name: <span th:text="${name}"></span></li>
+        <li>Guest Email: <span th:text="${email}"></span></li>
         <li>Room name: <span th:text="${roomName}"></span></li>
         <li>Number of adult(s): <span th:text="${numberOfAdults}"></span></li>
         <li>Number of children: <span th:text="${numberOfChildren}"></span></li>
@@ -28,7 +29,7 @@
 <br>
 <p>
     Regards, <br/>
-    &emsp; <em>The Reservations.com Team</em>
+    &emsp; <em>The Reservations Team</em>
 </p>
 </body>
 </html>

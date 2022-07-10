@@ -56,8 +56,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsersByRoleUser() {
-        Role role = roleService.getRoleByName(ERole.ROLE_USER);
+    public List<User> getAllUsersByRole(ERole eRole) {
+        Role role = roleService.getRoleByName(eRole);
         return role.getUser();
     }
 

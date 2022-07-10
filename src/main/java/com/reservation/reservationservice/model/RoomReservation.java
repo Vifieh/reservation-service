@@ -28,6 +28,11 @@ public class RoomReservation extends BaseEntity{
     private int numberOfChildren;
     private String specialRequest;
     private String arrivalTime;
+    private String ref;
+    private boolean hasPayed = false;
+    @Column(nullable=false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean hasCheckedOut = false;
+    private String checkedOutBy;
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
@@ -44,6 +49,6 @@ public class RoomReservation extends BaseEntity{
     @JoinColumn(name = "property_id")
     Property property;
 
-    @OneToMany(mappedBy = "roomReservation", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "roomReservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RoomReservationItem> roomReservationItemList;
 }

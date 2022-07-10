@@ -1,15 +1,11 @@
 package com.reservation.reservationservice.controller;
 
-import com.reservation.reservationservice.dto.CustomDto;
-import com.reservation.reservationservice.dto.ResponseMessage;
-import com.reservation.reservationservice.dto.RoomReservationDto;
-import com.reservation.reservationservice.dto.RoomReservationDto.ReservationContactDetailsDto;
+import com.reservation.reservationservice.dto.*;
 import com.reservation.reservationservice.model.RoomReservation;
 import com.reservation.reservationservice.payload.RoomReservationPayload;
 import com.reservation.reservationservice.service.RoomReservationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.reservation.reservationservice.dto.RoomReservationDto.*;
+import static org.springframework.http.HttpStatus.*;
 
 
 /**
@@ -26,7 +23,7 @@ import static com.reservation.reservationservice.dto.RoomReservationDto.*;
  * on 6/25/22
  */
 
-@RequestMapping("/api/v1/protected/")
+@RequestMapping("/api/v1/")
 @RestController
 @CrossOrigin()
 public class RoomReservationController {
@@ -40,18 +37,19 @@ public class RoomReservationController {
     String message = null;
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("roomReservation")
-    public ResponseEntity<ResponseMessage> reserveRoom(@RequestParam String propertyId,
+    @PostMapping("protected/roomReservations")
+    public ResponseEntity<SuccessResponse> reserveRoom(@RequestParam String propertyId,
                                                        @RequestBody @Valid RoomReservationPayload reservationPayload) {
-        reservationService.reserveRoom(propertyId, reservationPayload);
-        message = "Room reserved successfully!";
-        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.CREATED);
+       String roomReservationId = reservationService.reserveRoom(propertyId, reservationPayload);
+       message = "Room(s) served successfully";
+        return new ResponseEntity<>(new SuccessResponse(message, roomReservationId), CREATED);
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @GetMapping("reservations/properties/{propertyId}")
-    public ResponseEntity<List<RoomReservationDto>> getReservationsByProperty(@PathVariable String propertyId) {
-        List<RoomReservation> roomReservationList = reservationService.getRoomReservationsByProperty(propertyId);
+    @GetMapping("protected/reservations/properties/{propertyId}")
+    public ResponseEntity<List<RoomReservationDto>> getReservationsByProperty(@PathVariable String propertyId,
+                                                                              @RequestParam boolean hasCheckedOut) {
+        List<RoomReservation> roomReservationList = reservationService.getRoomReservationsByProperty(propertyId, hasCheckedOut);
         List<RoomReservationDto> roomReservationDtoList = roomReservationList.stream().map(reservation ->  {
             CustomDto countryDto = modelMapper.map(reservation.getContactDetails().getCountry(), CustomDto.class);
             ReservationContactDetailsDto reservationContactDetailsDto = new ReservationContactDetailsDto(reservation.getContactDetails().getId(),
@@ -64,9 +62,23 @@ public class RoomReservationController {
             }).collect(Collectors.toList());
             return new RoomReservationDto(reservation.getId(), reservation.getCheckIn(), reservation.getCheckOut(), reservation.getTotalPrice(),
                     reservation.getNumberOfAdults(), reservation.getNumberOfChildren(), reservation.getSpecialRequest(),
-                    reservation.getArrivalTime(), reservation.getCurrency(), reservationContactDetailsDto, roomReservationItemDto);
+                    reservation.getArrivalTime(), reservation.getRef(), reservation.getCurrency(), reservationContactDetailsDto, roomReservationItemDto);
         }).collect(Collectors.toList());
-        return new ResponseEntity<>(roomReservationDtoList, HttpStatus.OK);
+        return new ResponseEntity<>(roomReservationDtoList, OK);
+    }
+    @GetMapping("public/reservations/{reservationsId}")
+    public ResponseEntity<RoomReservationDTO> getReservation(@PathVariable String reservationsId) {
+        RoomReservation roomReservation = reservationService.getRoomReservation(reservationsId);
+        RoomReservationDTO roomReservationDTO = this.modelMapper.map(roomReservation, RoomReservationDTO.class);
+        return new ResponseEntity<>(roomReservationDTO, OK);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PatchMapping("roomReservations")
+    public ResponseEntity<ResponseMessage> checkOutGuest(@RequestParam String reservationId) {
+       reservationService.checkOutGuest(reservationId);
+       message = "Guest has been checked out successfully";
+        return new ResponseEntity<>(new ResponseMessage(message), OK);
     }
 
 }

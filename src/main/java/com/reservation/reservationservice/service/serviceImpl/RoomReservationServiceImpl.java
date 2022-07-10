@@ -1,7 +1,10 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+
+import com.reservation.reservationservice.dto.RoomReservationDTO;
+import com.reservation.reservationservice.exception.BadRequestException;
+import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.*;
-import com.reservation.reservationservice.payload.RoomReservationItemPayload;
 import com.reservation.reservationservice.payload.RoomReservationPayload;
 import com.reservation.reservationservice.repository.ReservationContactDetailsRepository;
 import com.reservation.reservationservice.repository.RoomRepository;
@@ -12,7 +15,9 @@ import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Vifieh Ruth
@@ -50,7 +55,7 @@ public class RoomReservationServiceImpl implements RoomReservationService {
     PropertyService propertyService;
 
     @Override
-    public void reserveRoom(String propertyId, RoomReservationPayload reservationPayload) {
+    public String reserveRoom(String propertyId, RoomReservationPayload reservationPayload) {
         RoomReservation roomReservation = new RoomReservation();
         User user = userService.getAuthUser();
         Property property = propertyService.getProperty(propertyId);
@@ -66,20 +71,44 @@ public class RoomReservationServiceImpl implements RoomReservationService {
         roomReservation.setSpecialRequest(reservationPayload.getSpecialRequest());
         roomReservation.setArrivalTime(reservationPayload.getArrivalTime());
         roomReservation.setCreatedBy(user.getEmail());
+        String ref="RS"+user.getId() +propertyId+ LocalDateTime.now();
+        roomReservation.setRef(ref);
         RoomReservation savedReservation = reservationRepository.save(roomReservation);
         ReservationContactDetails contactDetails = addReservationContactDetails(savedReservation, reservationPayload);
-        addRoomReservationItem(savedReservation, reservationPayload, contactDetails);
+        addRoomReservationItem(savedReservation, reservationPayload, contactDetails, property);
+        return savedReservation.getId();
     }
 
     @Override
-    public List<RoomReservation> getRoomReservationsByProperty(String propertyId) {
+    public List<RoomReservation> getRoomReservationsByProperty(String propertyId, boolean hasCheckedOut) {
         Property property = propertyService.getProperty(propertyId);
-        return reservationRepository.findByPropertyOrderByCheckInDesc(property);
+        return reservationRepository.findByPropertyAndHasCheckedOutOrderByCheckInDesc(property, hasCheckedOut);
     }
 
+    @Override
+    public RoomReservation getRoomReservation(String roomReservationId) {
+        Optional<RoomReservation> optionalRoomReservation = reservationRepository.findById(roomReservationId);
+        optionalRoomReservation.orElseThrow(() ->
+                new ResourceNotFoundException("No reservation found with id - " + roomReservationId));
+        return optionalRoomReservation.get();
+    }
+
+    @Override
+    public void checkOutGuest(String roomReservationId) {
+        User user = userService.getAuthUser();
+        RoomReservation roomReservation = getRoomReservation(roomReservationId);
+        roomReservation.setHasCheckedOut(true);
+        roomReservation.setCheckedOutBy(user.getEmail());
+        roomReservation.getRoomReservationItemList().forEach(roomReservationItem -> {
+            Room room = roomService.getRoom(roomReservationItem.getRoom().getId());
+            room.setNumberOfRooms(room.getNumberOfRooms() + roomReservationItem.getNumberOfRooms());
+            roomRepository.save(room);
+        });
+        reservationRepository.save(roomReservation);
+    }
 
     private void addRoomReservationItem(RoomReservation reservation, RoomReservationPayload reservationPayload,
-                                        ReservationContactDetails contactDetails) {
+                                        ReservationContactDetails contactDetails, Property property) {
         Email reservationEmail = new Email();
         reservationPayload.getReservationItemPayloadList().forEach(reservationItemPayload -> {
            Room room = roomService.getRoom(reservationItemPayload.getRoomId());
@@ -90,12 +119,16 @@ public class RoomReservationServiceImpl implements RoomReservationService {
             roomReservationItem.setNumberOfRooms(reservationItemPayload.getNumberOfRooms());
             roomReservationItem.setFullGuestName(reservationItemPayload.getFullGuestName());
             roomReservationItem.setGuestEmail(reservationItemPayload.getGuestEmail());
+            if (room.getNumberOfRooms() == 0) {
+                throw new BadRequestException("No rooms available of this type");
+            }
             roomReservationItem.setRoom(room);
             roomReservationItem.setRoomReservation(reservation);
             room.setNumberOfRooms(room.getNumberOfRooms() - roomReservationItem.getNumberOfRooms());
             roomRepository.save(room);
             reservationItemRepository.saveAndFlush(roomReservationItem);
             emailService.sendReservationCompletedEmail(contactDetails, reservationPayload, reservationEmail, room);
+            emailService.sendReservationCompletedEmailToManager(contactDetails, reservationPayload, reservationEmail, room, property.getCreatedBy());
         });
     }
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Vifieh Ruth
@@ -14,5 +15,8 @@ import java.util.List;
 
 @Repository
 public interface RoomReservationRepository extends JpaRepository<RoomReservation, String> {
-    List<RoomReservation> findByPropertyOrderByCheckInDesc(Property property);
+
+    List<RoomReservation> findByPropertyAndHasCheckedOutOrderByCheckInDesc(Property property, boolean hasCheckedOut);
+
+    Optional<RoomReservation> findByRef(String ref);
 }

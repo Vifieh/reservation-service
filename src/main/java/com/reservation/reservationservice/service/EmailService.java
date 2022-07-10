@@ -9,9 +9,13 @@ public interface EmailService {
 
     void sendCompletedRegistration(User user, Email email, Property property);
 
+    void sendCompletedRegistrationToAdmin(User user, Email email, Property property, String adminEmail);
+
     void approvedPropertyEmail(User user, Email email, Property property);
 
     void sendReservationCompletedEmail(ReservationContactDetails contactDetails, RoomReservationPayload reservationPayload,
                                        Email email, Room room);
 
+    void sendReservationCompletedEmailToManager(ReservationContactDetails contactDetails, RoomReservationPayload reservationPayload,
+                                               Email email, Room room, String propertyEmail);
 }

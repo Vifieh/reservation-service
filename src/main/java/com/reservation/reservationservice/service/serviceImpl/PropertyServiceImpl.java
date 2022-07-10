@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.service.serviceImpl;
 
+import com.reservation.reservationservice.constants.ERole;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.*;
@@ -185,7 +186,9 @@ public class PropertyServiceImpl implements PropertyService {
             throw new ResourceAlreadyExistException("Property is already registered");
         }
         property.setCompletedRegistration(true);
+        List<User> users = userService.getAllUsersByRole(ERole.ROLE_ADMIN);
         emailService.sendCompletedRegistration(user, completedEmail, property);
+        emailService.sendCompletedRegistrationToAdmin(user, completedEmail, property, users.get(0).getEmail());
         propertyRepository.save(property);
     }
 

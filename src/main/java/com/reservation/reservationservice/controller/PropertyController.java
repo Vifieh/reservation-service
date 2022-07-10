@@ -126,7 +126,7 @@ public class PropertyController {
     @PatchMapping("protected/registration/properties/{propertyId}")
     public ResponseEntity<ResponseMessage> completeRegistration(@PathVariable String propertyId) {
         propertyService.completeRegistration(propertyId);
-        message = "Property created successfully";
+        message = "Property registration completed successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 

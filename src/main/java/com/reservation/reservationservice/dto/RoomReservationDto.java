@@ -29,6 +29,7 @@ public class RoomReservationDto {
     private int numberOfChildren;
     private String specialRequest;
     private String arrivalTime;
+    private String ref;
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
@@ -57,10 +58,8 @@ public class RoomReservationDto {
         private double price;
         private String fullGuestName;
         private String guestEmail;
-
         @Enumerated(EnumType.STRING)
         private Currency currency;
         private CustomDto roomDto;
     }
-
 }

@@ -60,6 +60,7 @@ public class RoleController {
         return new ResponseEntity<>(roleDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("roles/{roleId}")
     public ResponseEntity<ResponseMessage> deleteRole(@PathVariable("roleId") String roleId) {
         roleService.deleteRole(roleId);

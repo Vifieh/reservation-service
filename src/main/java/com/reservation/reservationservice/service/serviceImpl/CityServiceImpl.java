@@ -80,6 +80,14 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public City getCityByName(String cityName) {
+        Optional<City> city = cityRepository.findByName(cityName);
+        city.orElseThrow(() -> new ResourceNotFoundException("City not found with name - "+ cityName));
+        return city.get();
+    }
+
+
+    @Override
     public void deleteCity(String cityId) {
         cityRepository.deleteById(cityId);
     }
