@@ -1,5 +1,6 @@
 package com.reservation.reservationservice.model;
 
+import com.reservation.reservationservice.constants.Currency;
 import com.reservation.reservationservice.constants.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,12 @@ public class GuestExtraBed {
     @EmbeddedId
     private GuestExtraBedKey id;
 
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
+
+    private String range;
+    private int unitPrice;
+
     @ManyToOne
     @MapsId("guestId")
     @JoinColumn(name = "guest_id")
@@ -26,8 +33,5 @@ public class GuestExtraBed {
     @JoinColumn(name = "extraBed_id")
     private ExtraBed extraBed;
 
-    private String range;
-
-    private int unitPrice;
 
 }

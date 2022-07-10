@@ -15,6 +15,11 @@ public class Property extends BaseEntity{
     private String id;
     private String name;
     private int rating;
+//    private int reviews = 0;
+    private boolean pending = true;
+
+//    @Column(nullable=false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean completedRegistration = false;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "propertyContactDetails_id", referencedColumnName = "id")
@@ -41,6 +46,9 @@ public class Property extends BaseEntity{
 
     @OneToMany(mappedBy = "property")
     List<PropertyFacility> propertyFacilities;
+
+    @OneToMany(mappedBy = "property")
+    List<RoomReservation> roomReservationList;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

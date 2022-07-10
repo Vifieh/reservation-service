@@ -16,7 +16,7 @@ import java.util.List;
 public class Role {
 
     @Id
-    private Long id;
+    private String id;
 
     @Enumerated(EnumType.STRING)
     private ERole role;

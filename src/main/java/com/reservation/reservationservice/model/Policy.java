@@ -30,7 +30,7 @@ public class Policy {
     private String checkOutTo;
 
     @Enumerated(EnumType.STRING)
-    private Default CanAccommodateChildren;
+    private Default canAccommodateChildren;
 
     @OneToOne
     @JoinColumn(name = "property_id")

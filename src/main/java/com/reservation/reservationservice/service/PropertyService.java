@@ -1,33 +1,33 @@
 package com.reservation.reservationservice.service;
 
-import com.reservation.reservationservice.model.Language;
 import com.reservation.reservationservice.model.Parking;
-import com.reservation.reservationservice.model.PaymentOption;
+import com.reservation.reservationservice.model.Policy;
 import com.reservation.reservationservice.model.Property;
-import com.reservation.reservationservice.payload.BreakfastPayload;
-import com.reservation.reservationservice.payload.ExtraBedPayload;
-import com.reservation.reservationservice.payload.PolicyPayload;
-import com.reservation.reservationservice.payload.PropertyFacilityPayload;
+import com.reservation.reservationservice.payload.*;
 
 import java.util.List;
 
 public interface PropertyService {
 
-    Property saveProperty(String propertyTypeId, Property property);
+    Property saveProperty(String propertyTypeId, PropertyPayload propertyPayload);
 
     Property getProperty(String propertyId);
 
-    void addParkingFacility(String propertyId, Parking parking);
+    List<Property> getAllProperties(boolean pending, boolean completedRegistration);
 
-    void addLanguage(String propertyId, List<Language> languages);
+    List<Property> getAllPropertiesOfUSer();
 
-    void addFacilities(String propertyId, List<PropertyFacilityPayload> propertyFacilityPayloads);
-
-    void addBreakfast(String propertyId, BreakfastPayload breakfastPayload);
-
-    void addExtraBedOption(String propertyId, ExtraBedPayload extraBedPayload);
+    void addFacilityServices(String propertyId, FacilitiesServicesPayload facilitiesServicesPayload);
 
     void addPolicy(String propertyId, PolicyPayload policyPayload);
 
-    void adPaymentOption(String propertyId, List<PaymentOption> paymentOptions);
+    void addPaymentOptions(String propertyId, List<CustomPayload> paymentOptionsPayload);
+
+    void approveProperty(String propertyId);
+
+    void completeRegistration(String propertyId);
+
+    Parking getParkingByProperty(String propertyId);
+
+    Policy getPolicyByProperty(String propertyId);
 }

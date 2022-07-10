@@ -1,9 +1,13 @@
 package com.reservation.reservationservice.controller;
 
 import com.reservation.reservationservice.dto.CustomDto;
+import com.reservation.reservationservice.dto.FacilityDto;
+import com.reservation.reservationservice.dto.PropertyFacilityDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
 import com.reservation.reservationservice.model.Facility;
+import com.reservation.reservationservice.model.PropertyFacility;
 import com.reservation.reservationservice.payload.CustomPayload;
+import com.reservation.reservationservice.payload.FacilityPayload;
 import com.reservation.reservationservice.service.FacilityService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +34,7 @@ public class FacilityController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("facilities")
-    public ResponseEntity<ResponseMessage> createFacility(@RequestBody CustomPayload facilityPayload) {
+    public ResponseEntity<ResponseMessage> createFacility(@RequestBody FacilityPayload facilityPayload) {
         Facility facility = modelMapper.map(facilityPayload, Facility.class);
         facilityService.createFacility(facility);
         message = "Facility created successfully!";
@@ -40,7 +44,7 @@ public class FacilityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("facilities/{facilityId}")
     public ResponseEntity<ResponseMessage> editFacility(@PathVariable String facilityId,
-                                                            @RequestBody CustomPayload facilityPayload) {
+                                                            @RequestBody FacilityPayload facilityPayload) {
         Facility facility = modelMapper.map(facilityPayload, Facility.class);
         facilityService.editFacility(facilityId, facility);
         message = "Facility edited successfully!";
@@ -49,18 +53,29 @@ public class FacilityController {
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("facilities")
-    public ResponseEntity<List<CustomDto>> getFacilities() {
+    public ResponseEntity<List<FacilityDto>> getFacilities() {
         List<Facility> facilities = facilityService.getAllFacilities();
-        List<CustomDto> facilitiesDtos = facilities.stream().map(facility ->
-                modelMapper.map(facility, CustomDto.class)).collect(Collectors.toList());
+        List<FacilityDto> facilitiesDtos = facilities.stream().map(facility ->
+                modelMapper.map(facility, FacilityDto.class)).collect(Collectors.toList());
         return new ResponseEntity<>(facilitiesDtos, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("facilities/properties/{propertyId}")
+    public ResponseEntity<List<PropertyFacilityDto>> getFacilitiesByProperty(@PathVariable String propertyId) {
+        List<PropertyFacility> propertyFacilityList = facilityService.getAllFacilitiesByProperty(propertyId);
+        List<PropertyFacilityDto> propertyFacilityDtoList = propertyFacilityList.stream().map(propertyFacility -> {
+                    FacilityDto facilitiesDto = modelMapper.map(propertyFacility.getFacility(), FacilityDto.class);
+                  return new PropertyFacilityDto(facilitiesDto, propertyFacility.getStatus());
+        }).collect(Collectors.toList());
+        return new ResponseEntity<>(propertyFacilityDtoList, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("facilities/{facilityId}")
-    public ResponseEntity<CustomDto> getFacility(@PathVariable String facilityId) {
+    public ResponseEntity<FacilityDto> getFacility(@PathVariable String facilityId) {
         Facility facility = facilityService.getFacility(facilityId);
-        CustomDto facilitiesDto = modelMapper.map(facility, CustomDto.class);
+        FacilityDto facilitiesDto = modelMapper.map(facility, FacilityDto.class);
         return new ResponseEntity<>(facilitiesDto, HttpStatus.OK);
     }
 

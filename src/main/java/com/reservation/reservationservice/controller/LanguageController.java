@@ -47,12 +47,19 @@ public class LanguageController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("languages")
     public ResponseEntity<List<CustomDto>> getLanguages() {
         List<Language> languages = languageService.getAllLanguages();
-        List<CustomDto> languagesDtos = languages.stream().map(language ->
-                modelMapper.map(language, CustomDto.class)).collect(Collectors.toList());
+        List<CustomDto> languagesDtos = getLanguageDtoList(languages);
+        return new ResponseEntity<>(languagesDtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("languages/properties/{propertyId}")
+    public ResponseEntity<List<CustomDto>> getLanguagesOfAProperty(@PathVariable String propertyId) {
+        List<Language> languages = languageService.getLanguagesByProperty(propertyId);
+        List<CustomDto> languagesDtos = getLanguageDtoList(languages);
         return new ResponseEntity<>(languagesDtos, HttpStatus.OK);
     }
 
@@ -70,5 +77,10 @@ public class LanguageController {
         languageService.deleteLanguage(languageId);
         message = "Language deleted successfully!";
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+    }
+
+    private List<CustomDto> getLanguageDtoList(List<Language> languages) {
+        return languages.stream().map(language ->
+                modelMapper.map(language, CustomDto.class)).collect(Collectors.toList());
     }
 }

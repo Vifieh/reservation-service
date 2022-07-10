@@ -50,20 +50,21 @@ public class AmenityServiceImpl implements AmenityService {
         User user = userService.getAuthUser();
         Amenity amenity1 = getAmenity(amenityId);
         amenity1.setName(amenity.getName());
+        amenity1.setMostRequested(amenity.isMostRequested());
         amenity1.setUser(user);
         amenity1.setCreatedBy(user.getEmail());
         amenityRepository.save(amenity1);
     }
 
     @Override
-    public List<Amenity> getAllAmenities() {
-        return amenityRepository.findAll();
+    public List<Amenity> getAllAmenities(boolean mostRequested) {
+        return amenityRepository.findAllByMostRequested(mostRequested);
     }
 
     @Override
-    public List<Amenity> getAmenitiesByCategory(String categoryId) {
-        List<Amenity> amenities = categoryAmenityService.getCategoryAmenity(categoryId).getAmenities();
-        return amenities;
+    public List<Amenity> getAmenitiesByCategory(String categoryId, boolean mostRequested) {
+       CategoryAmenity categoryAmenity = categoryAmenityService.getCategoryAmenity(categoryId);
+        return amenityRepository.findByAndCategoryAmenityAndMostRequested(categoryAmenity, mostRequested);
     }
 
 

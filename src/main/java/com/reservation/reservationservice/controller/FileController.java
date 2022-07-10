@@ -28,8 +28,8 @@ public class FileController {
     FileStorageService fileStorageService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "protected/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseMessage> uploadFiles(@RequestParam String directory, @RequestPart("files")MultipartFile[] files) {
+    @PostMapping(path = "protected/upload/{directory}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseMessage> uploadFiles(@PathVariable String directory, @RequestPart("files")MultipartFile[] files) {
         String message = "";
         try {
             List<String> fileNames = new ArrayList<>();

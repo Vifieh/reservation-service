@@ -1,11 +1,6 @@
 package com.reservation.reservationservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.TokenRefreshException;
-import com.reservation.reservationservice.model.User;
-import com.reservation.reservationservice.payload.LoginPayload;
 import com.reservation.reservationservice.payload.RegisterPayload;
 import com.reservation.reservationservice.payload.TokenRefreshPayload;
 import com.reservation.reservationservice.service.serviceImpl.AuthenticationServiceImpl;
@@ -14,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -46,7 +39,7 @@ class AuthenticationControllerTest {
     @Test
     void confirm_should_call_authenticationService() {
         String token = "token";
-        ResponseEntity responseEntity = authenticationController.confirm(token);
+        ResponseEntity responseEntity = authenticationController.confirmAccount(token);
         verify(authenticationService).confirmToken(token);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);

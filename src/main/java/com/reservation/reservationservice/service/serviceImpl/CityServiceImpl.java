@@ -4,6 +4,7 @@ import com.reservation.reservationservice.exception.ResourceAlreadyExistExceptio
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.City;
 import com.reservation.reservationservice.model.Country;
+import com.reservation.reservationservice.model.PropertyAddress;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.CityRepository;
 import com.reservation.reservationservice.service.CityService;
@@ -18,7 +19,7 @@ import java.util.Optional;
 
 @Service
 public class CityServiceImpl implements CityService {
-    private Util util = new Util();
+    private final Util util = new Util();
 
     @Autowired
     CityRepository cityRepository;
@@ -62,8 +63,13 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<City> getCitiesByCountry(String countryId) {
-        List<City> cities = countryService.getCountry(countryId).getCities();
-        return cities;
+        return countryService.getCountry(countryId).getCities();
+    }
+
+    @Override
+    public List<PropertyAddress> getPropertyAddressByCity(String cityId) {
+        City city = getCity(cityId);
+        return city.getPropertyAddresses();
     }
 
     @Override
@@ -72,6 +78,14 @@ public class CityServiceImpl implements CityService {
         city.orElseThrow(() -> new ResourceNotFoundException("City not found with id - "+ cityId));
         return city.get();
     }
+
+    @Override
+    public City getCityByName(String cityName) {
+        Optional<City> city = cityRepository.findByName(cityName);
+        city.orElseThrow(() -> new ResourceNotFoundException("City not found with name - "+ cityName));
+        return city.get();
+    }
+
 
     @Override
     public void deleteCity(String cityId) {

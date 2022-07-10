@@ -2,19 +2,14 @@ package com.reservation.reservationservice.service.serviceImpl;
 
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.*;
-import com.reservation.reservationservice.payload.RoomAmenityPayload;
-import com.reservation.reservationservice.payload.RoomBedAvailablePayload;
-import com.reservation.reservationservice.payload.RoomPayload;
-import com.reservation.reservationservice.repository.AmenityRepository;
-import com.reservation.reservationservice.repository.RoomBedAvailableRepository;
-import com.reservation.reservationservice.repository.RoomRepository;
+import com.reservation.reservationservice.payload.*;
+import com.reservation.reservationservice.repository.*;
 import com.reservation.reservationservice.service.*;
 import com.reservation.reservationservice.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +23,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     RoomBedAvailableRepository roomBedAvailableRepository;
+
+    @Autowired
+    ExtraBedRepository extraBedRepository;
+
+    @Autowired
+    GuestExtraBedRepository guestExtraBedRepository;
 
     @Autowired
     PropertyService propertyService;
@@ -44,13 +45,15 @@ public class RoomServiceImpl implements RoomService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    GuestService guestService;
+
 
     @Override
-    public void createRoom(String propertyId, String roomNameId, RoomPayload roomPayload) {
-        List<RoomBedAvailable> roomBedAvailables = new ArrayList<>();
+    public void createRoom(String propertyId, RoomPayload roomPayload) {
         User user = userService.getAuthUser();
         Property property = propertyService.getProperty(propertyId);
-        RoomName roomName = roomNameService.getRoomName(roomNameId);
+        RoomName roomName = roomNameService.getRoomName(roomPayload.getRoomNameId());
         Room room = new Room();
         room.setId(util.generateId());
         room.setUser(user);
@@ -70,15 +73,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void addRoomAmenities(List<RoomAmenityPayload> roomAmenityPayload) {
-        roomAmenityPayload.forEach(roomAmenityPayload1 -> {
-            Amenity amenity = amenityService.getAmenity(roomAmenityPayload1.getAmenityId());
-            roomAmenityPayload1.getRooms().forEach(room -> {
-                Room room1 = getRoom(room.getId());
-                room1.getAmenities().add(amenity);
-                roomRepository.save(room1);
-            });
-        });
+    public void addExtraBedOptionsAndRoomAmenities(String propertyId, ExtraBedOptionsAndRoomAmenitiesPayload extraBedOptionsAndRoomAmenitiesPayload) {
+        addExtraBedOption(propertyId, extraBedOptionsAndRoomAmenitiesPayload);
+        addRoomAmenities(extraBedOptionsAndRoomAmenitiesPayload);
     }
 
     @Override
@@ -88,6 +85,18 @@ public class RoomServiceImpl implements RoomService {
         return room.get();
     }
 
+    @Override
+    public List<Room> getAllRoomsOfUserByProperty(String propertyId) {
+        User user = userService.getAuthUser();
+        Property property = propertyService.getProperty(propertyId);
+        return roomRepository.findByUserAndProperty(user, property);
+    }
+
+    @Override
+    public List<Room> getAllRoomsByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return roomRepository.findByProperty(property);
+    }
 
     private void addRoomBedAvailable(RoomPayload roomPayload, Room room1) {
         for (RoomBedAvailablePayload roomBedAvailablePayload : roomPayload.getRoomBedAvailablePayloadList()) {
@@ -101,4 +110,36 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    private void addExtraBedOption(String propertyId, ExtraBedOptionsAndRoomAmenitiesPayload extraBedPayload) {
+        User user = userService.getAuthUser();
+        Property property = propertyService.getProperty(propertyId);
+        ExtraBed extraBed = new ExtraBed();
+        extraBed.setId(util.generateId());
+        extraBed.setNumberOfExtraBeds(extraBedPayload.getExtraBedPayload().getNumberOfExtraBeds());
+        extraBed.setUser(user);
+        extraBed.setProperty(property);
+        ExtraBed extraBed1 = extraBedRepository.save(extraBed);
+        extraBedPayload.getExtraBedPayload().getGuestExtraBedPayloadList().forEach(guestExtraBedPayload -> {
+            GuestExtraBed guestExtraBed = new GuestExtraBed();
+            Guest guest = guestService.getGuest(guestExtraBedPayload.getGuestId());
+            guestExtraBed.setId(new GuestExtraBedKey(guest.getId(), extraBed1.getId()));
+            guestExtraBed.setExtraBed(extraBed1);
+            guestExtraBed.setGuest(guest);
+            guestExtraBed.setUnitPrice(guestExtraBedPayload.getUnitPrice());
+            guestExtraBed.setRange(guestExtraBedPayload.getRange());
+            guestExtraBed.setCurrency(guestExtraBedPayload.getCurrency());
+            guestExtraBedRepository.save(guestExtraBed);
+        });
+    }
+
+    private void addRoomAmenities(ExtraBedOptionsAndRoomAmenitiesPayload bedOptionsRoomAmenitiesPayload) {
+        bedOptionsRoomAmenitiesPayload.getRoomAmenityPayloadList().forEach(roomAmenityPayload1 -> {
+            Amenity amenity = amenityService.getAmenity(roomAmenityPayload1.getAmenityId());
+            roomAmenityPayload1.getRooms().forEach(room -> {
+                Room room1 = getRoom(room.getId());
+                room1.getAmenities().add(amenity);
+                roomRepository.save(room1);
+            });
+        });
+    }
 }

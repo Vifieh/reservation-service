@@ -5,5 +5,5 @@ package com.reservation.reservationservice.constants;
  * on 5/23/22
  */
 public enum Default {
-    YES, NO
+     NO, YES, UPON_REQUEST
 }

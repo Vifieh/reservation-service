@@ -16,6 +16,7 @@ public class Facility extends BaseEntity{
     @Id
     private String id;
     private String name;
+    private boolean choice = false;
 
     @OneToMany(mappedBy = "facility")
     List<PropertyFacility> propertyFacilities;

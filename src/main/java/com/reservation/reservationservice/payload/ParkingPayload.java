@@ -1,12 +1,16 @@
 package com.reservation.reservationservice.payload;
 
-import com.reservation.reservationservice.constants.Available;
-import com.reservation.reservationservice.constants.Reservation;
-import com.reservation.reservationservice.constants.Site;
-import com.reservation.reservationservice.constants.Type;
+import com.reservation.reservationservice.constants.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParkingPayload {
 
     private Available available;
@@ -14,6 +18,9 @@ public class ParkingPayload {
     private Site site;
     private Reservation reservation;
     private double unitPrice;
+
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
 }
 

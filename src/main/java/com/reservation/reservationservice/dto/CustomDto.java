@@ -13,5 +13,4 @@ public class CustomDto extends BaseEntity {
 
     private String id;
     private String name;
-
 }

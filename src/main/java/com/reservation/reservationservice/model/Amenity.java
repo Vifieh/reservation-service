@@ -19,6 +19,7 @@ public class Amenity extends BaseEntity{
 
     @Size(min = 3, message = "Country should have atleast 3 characters")
     private String name;
+    private boolean mostRequested = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -3,9 +3,11 @@ package com.reservation.reservationservice.service.serviceImpl;
 import com.reservation.reservationservice.exception.ResourceAlreadyExistException;
 import com.reservation.reservationservice.exception.ResourceNotFoundException;
 import com.reservation.reservationservice.model.Language;
+import com.reservation.reservationservice.model.Property;
 import com.reservation.reservationservice.model.User;
 import com.reservation.reservationservice.repository.LanguageRepository;
 import com.reservation.reservationservice.service.LanguageService;
+import com.reservation.reservationservice.service.PropertyService;
 import com.reservation.reservationservice.service.UserService;
 import com.reservation.reservationservice.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    PropertyService propertyService;
 
 
     @Override
@@ -55,6 +60,12 @@ public class LanguageServiceImpl implements LanguageService {
         Optional<Language> language = languageRepository.findById(languageId);
         language.orElseThrow(() -> new ResourceNotFoundException("Language not found with id -  " + languageId));
         return language.get();
+    }
+
+    @Override
+    public List<Language> getLanguagesByProperty(String propertyId) {
+        Property property = propertyService.getProperty(propertyId);
+        return property.getLanguages();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.reservation.reservationservice.controller;
 
+import com.reservation.reservationservice.dto.BreakfastDto;
 import com.reservation.reservationservice.dto.CustomDto;
 import com.reservation.reservationservice.dto.ResponseMessage;
+import com.reservation.reservationservice.model.Breakfast;
 import com.reservation.reservationservice.model.BreakfastAvailable;
 import com.reservation.reservationservice.payload.CustomPayload;
 import com.reservation.reservationservice.service.BreakfastAvailableService;
@@ -47,21 +49,30 @@ public class BreakfastAvailableController {
         return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.ACCEPTED);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
-    @GetMapping("breakfastAvailable")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("breakfastsAvailable")
     public ResponseEntity<List<CustomDto>> getAllBreakfastAvailable() {
         List<BreakfastAvailable> breakfastAvailableList = breakfastAvailableService.getAllBreakfastAvailable();
-        List<CustomDto> breakfastAvailableDtos = breakfastAvailableList.stream().map(breakfastAvailable ->
-                modelMapper.map(breakfastAvailable, CustomDto.class)).collect(Collectors.toList());
+        List<CustomDto> breakfastAvailableDtos = getBreakfastAvailableDtoList(breakfastAvailableList);
         return new ResponseEntity<>(breakfastAvailableDtos, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("breakfastAvailable/{breakfastAvailableId}")
     public ResponseEntity<CustomDto> getBreakfastAvailable(@PathVariable String breakfastAvailableId) {
         BreakfastAvailable breakfastAvailable = breakfastAvailableService.getBreakfastAvailable(breakfastAvailableId);
         CustomDto breakfastAvailableDto = modelMapper.map(breakfastAvailable, CustomDto.class);
         return new ResponseEntity<>(breakfastAvailableDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("breakfast/properties{propertyId}")
+    public ResponseEntity<BreakfastDto> getBreakfastDetailsOfAProperty(@PathVariable String propertyId) {
+        Breakfast breakfast = breakfastAvailableService.getAllBreakfastByProperty(propertyId);
+        List<CustomDto> breakfastAvailableDto = getBreakfastAvailableDtoList(breakfast.getBreakfastAvailableList());
+        BreakfastDto breakfastDto = new BreakfastDto(breakfast.getId(), breakfast.getUnitPrice(), breakfast.getCurrency(),
+                breakfast.getAvailable(), breakfastAvailableDto);
+        return new ResponseEntity<>(breakfastDto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -75,5 +86,10 @@ public class BreakfastAvailableController {
     private BreakfastAvailable getBreakfastAvailable(CustomPayload breakfastAvailablePayload) {
         BreakfastAvailable breakfastAvailable = modelMapper.map(breakfastAvailablePayload, BreakfastAvailable.class);
         return breakfastAvailable;
+    }
+
+    private List<CustomDto> getBreakfastAvailableDtoList(List<BreakfastAvailable> breakfastAvailableList) {
+        return breakfastAvailableList.stream().map(breakfastAvailable ->
+                modelMapper.map(breakfastAvailable, CustomDto.class)).collect(Collectors.toList());
     }
 }

@@ -50,7 +50,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("confirm")
-    public ResponseEntity<String> confirm(@RequestParam("token") String token) {
+    public ResponseEntity<String> confirmAccount(@RequestParam("token") String token) {
         String message = authenticationService.confirmToken(token);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

@@ -67,7 +67,7 @@ public class CountryController {
     public ResponseEntity<ResponseMessage> deleteCountry(@PathVariable("countryId") String countryId) {
         countryService.deleteCountry(countryId);
         message = "Country deleted successfully";
-        return new ResponseEntity<>(new ResponseMessage(message) , HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ResponseMessage(message) , HttpStatus.OK);
     }
 
     private Country convertCountryToCountryPayload(CustomPayload countryPayload) {
