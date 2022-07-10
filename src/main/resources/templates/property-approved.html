@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Registration completed</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <style type="text/css">
+        body {
+            font-family: calibri, 'DejaVu Sans', Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<h1>Congrats! You're property has been approved</h1>
+<p>Hello! <b th:text="${name}">name</b> !</p>
+<div>
+    Your property <span th:text="${propertyName}"></span>
+    on Reservations.com has been approved
+</div>
+<p>You can now check your property on Reservations.com</p>
+
+<br>
+
+<p>
+    Regards, <br/>
+    &emsp; <em>The Reservations Team</em>
+</p>
+</body>
+</html>

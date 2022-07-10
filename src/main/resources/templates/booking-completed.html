@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Booking completed</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <style type="text/css">
+        body {
+            font-family: calibri, 'DejaVu Sans', Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<h1>Congrats! You're booking is completed </h1>
+<p>Dear <span th:text="${name}"></span>,</p>
+<div>
+    You have completed your reservation for <span th:text="${propertyName}"></span>
+    Your reservation details are:
+    <ul>
+        <li>Room name: <span th:text="${roomName}"></span></li>
+        <li>Number of adult(s): <span th:text="${numberOfAdults}"></span></li>
+        <li>Number of children: <span th:text="${numberOfChildren}"></span></li>
+        <li>Total price: <span th:text="${totalPrice}"></span></li>
+    </ul>
+</div>
+
+<br>
+<p>Thanks for trusting Reservations.com</p>
+<br>
+<p>
+    Regards, <br/>
+    &emsp; <em>The Reservations.com Team</em>
+</p>
+</body>
+</html>
