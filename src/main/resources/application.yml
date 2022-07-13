@@ -46,5 +46,5 @@ reservation:
     jwtSecret: 'secret'
     jwtExpirationMs: '86400000'
     jwtRefreshExpirationMs: '86400000'
-    baseUrlDeploy:
+    baseUrlDeploy: 'https://reservation-service2022.herokuapp.com/'
     baseUrlLocal: 'http://localhost:8080/'

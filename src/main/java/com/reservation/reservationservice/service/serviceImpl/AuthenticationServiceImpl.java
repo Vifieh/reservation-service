@@ -68,6 +68,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${reservation.app.baseUrlLocal}")
     private String baseUrlLocal;
 
+    @Value("${reservation.app.baseUrlDeploy}")
+    private String baseUrlDeploy;
+
 
     @Override
     public void register(RegisterPayload registerPayload) {
@@ -92,7 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 LocalDateTime.now().plusMinutes(10),
                 user
         );
-        String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
+        String link = baseUrlDeploy + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
         emailService.sendUserRegistration(user, email,  link);
         userRepository.save(user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -128,7 +131,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 LocalDateTime.now().plusMinutes(15),
                 user1.get()
         );
-        String link = baseUrlLocal + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
+        String link = baseUrlDeploy + "api/v1/public/auth/confirm?token=" + confirmationToken.getToken();
         if(user1.get().getTokens().get(0).getConfirmedAt() == null) {
             confirmationTokenService.saveConfirmationToken(confirmationToken);
             emailService.sendUserRegistration(user1.get(), email1, link);
