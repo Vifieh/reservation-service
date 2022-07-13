@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface RoomReservationService {
 
-    String reserveRoom(String propertyId, RoomReservationPayload reservationPayload);
+    RoomReservation reserveRoom(String propertyId, RoomReservationPayload reservationPayload);
 
     List<RoomReservation> getRoomReservationsByProperty(String propertyId, boolean hasCheckedOut);
 
