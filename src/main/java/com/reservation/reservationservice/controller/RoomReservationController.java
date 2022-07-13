@@ -38,11 +38,14 @@ public class RoomReservationController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("protected/roomReservations")
-    public ResponseEntity<SuccessResponse> reserveRoom(@RequestParam String propertyId,
+    public ResponseEntity<RoomReservationResponse> reserveRoom(@RequestParam String propertyId,
                                                        @RequestBody @Valid RoomReservationPayload reservationPayload) {
-       String roomReservationId = reservationService.reserveRoom(propertyId, reservationPayload);
+       RoomReservation roomReservation = reservationService.reserveRoom(propertyId, reservationPayload);
        message = "Room(s) served successfully";
-        return new ResponseEntity<>(new SuccessResponse(message, roomReservationId), CREATED);
+        RoomReservationResponse reservationResponse =  new RoomReservationResponse(roomReservation.getId(), roomReservation.getCheckIn(), roomReservation.getCheckOut(), roomReservation.getTotalPrice(),
+                roomReservation.getNumberOfAdults(), roomReservation.getNumberOfChildren(), roomReservation.getSpecialRequest(),
+                roomReservation.getArrivalTime(), roomReservation.getRef(), roomReservation.getCurrency());
+        return new ResponseEntity<>( reservationResponse, CREATED);
     }
 
     @PreAuthorize("hasRole('MANAGER')")

@@ -55,7 +55,7 @@ public class RoomReservationServiceImpl implements RoomReservationService {
     PropertyService propertyService;
 
     @Override
-    public String reserveRoom(String propertyId, RoomReservationPayload reservationPayload) {
+    public RoomReservation reserveRoom(String propertyId, RoomReservationPayload reservationPayload) {
         RoomReservation roomReservation = new RoomReservation();
         User user = userService.getAuthUser();
         Property property = propertyService.getProperty(propertyId);
@@ -76,7 +76,7 @@ public class RoomReservationServiceImpl implements RoomReservationService {
         RoomReservation savedReservation = reservationRepository.save(roomReservation);
         ReservationContactDetails contactDetails = addReservationContactDetails(savedReservation, reservationPayload);
         addRoomReservationItem(savedReservation, reservationPayload, contactDetails, property);
-        return savedReservation.getId();
+        return savedReservation;
     }
 
     @Override
