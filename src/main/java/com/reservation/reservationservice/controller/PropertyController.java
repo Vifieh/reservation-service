@@ -143,10 +143,10 @@ public class PropertyController {
     }
 
     private List<FileInfo> getFileInfoList(Property property) {
-        return fileStorageService.loadAll(property.getName()).map(path -> {
+        return fileStorageService.loadAll(property.getId()).map(path -> {
             String filename = path.getFileName().toString();
             String url = MvcUriComponentsBuilder
-                    .fromMethodName(FileController.class, "getFile", property.getName(), path.getFileName().toString()).build().toString();
+                    .fromMethodName(FileController.class, "getFile", property.getId(), path.getFileName().toString()).build().toString();
             return new FileInfo(filename, url);
         }).collect(Collectors.toList());
     }
