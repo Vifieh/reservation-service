@@ -62,4 +62,22 @@ public class RoomReservationDto {
         private Currency currency;
         private CustomDto roomDto;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RoomReservationResponse {
+
+        private String id;
+        private Date checkIn;
+        private Date checkOut;
+        private double totalPrice;
+        private int numberOfAdults;
+        private int numberOfChildren;
+        private String specialRequest;
+        private String arrivalTime;
+        private String ref;
+        @Enumerated(EnumType.STRING)
+        private Currency currency;
+    }
 }
